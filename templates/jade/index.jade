@@ -1,4 +1,5 @@
 include ./lib/header.jade
+link(href="{{ STATIC_URL }}css/index.css",rel="stylesheet",type="text/css")
 body
 	section.title
 		img(src="{{ STATIC_URL }}image/six-month-logo.png",class="six-month-logo")
@@ -13,7 +14,7 @@ body
 		div.finger
 			a.finger-area
 				img.finger-image(src="{{ STATIC_URL }}image/finger.png")
-		div(class="line")=""
+			div(class="line")=""
 		div.finger-instruction
 			span 按下手印 加入行动
 		div.win-text-first
@@ -27,5 +28,10 @@ body
 	img(src="{{ STATIC_URL }}image/girl_and_woman.png",class="girl-and-woman")
 	img(src="{{ STATIC_URL }}image/soy-bottle.png",class="soy-bottle")
 	footer(class="bottom-color")=""
-script(language="javascript",src="{{ STATIC_URL }}js/index.js")
+	
+	div.instruction
+		img(src="{{ STATIC_URL }}image/instruction.png",class="instruction-img")
+		img(src="{{ STATIC_URL }}image/instruction-close.png",class="instruction-close")
+
+script(language="javascript",src="{{ STATIC_URL }}js/index.min.js")
 

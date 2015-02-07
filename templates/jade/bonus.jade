@@ -1,0 +1,58 @@
+include ./lib/header.jade
+link(href="{{ STATIC_URL }}css/bonus.css",rel="stylesheet",type="text/css")
+body
+	section.title
+		img(src="{{ STATIC_URL }}image/six-month-logo.png",class="six-month-logo")
+		div.join-in
+			p.text-center 您是第x位加入
+		div.join-in-second
+			p.text-center “和妈妈一起美丽下厨”行动的参与者
+	section.body
+		div.bouns-center
+			img(src="{{ STATIC_URL }}image/coner.png",class="coner")
+			div.first
+				p.text-center 123
+			div.second
+				p.text-center 123
+			div.third
+				p.text-center 123
+			div.fourth
+				p.text-center 123
+	section.footer
+		div(class="bottom-color")=""
+		img(src="{{ STATIC_URL }}image/girl_and_woman.png",class="girl-and-woman")
+		a(class="left-btn")
+			img(src="{{ STATIC_URL }}image/help-mom-btn.png")
+		a(class="right-btn")
+			img(src="{{ STATIC_URL }}image/share-btn.png")
+	
+	div.edit-message
+		img.title(src="")
+		div.name.clearfix
+			div.inline.tip-text 领奖人姓名
+			div.inline 
+				input(type="text",placeholder="请输入您的姓名",class="middle-input")
+		div.phone.clearfix
+			div.inline.tip-text 联系电话
+			div.inline 
+				input(type="text",placeholder="请输入您的电话号码",class="middle-input")
+		div.address.clearfix
+			div.inline.tip-text 收货地址
+			div.inline 
+				input(type="text",class="little-input")
+			div.inline 省
+			div.inline 
+				input(type="text",class="little-input")
+			div.inline 市
+			div.inline 
+				input(type="text",class="little-input")
+			div.inline 区/县
+		div.address-detail.clearfix
+			div.inline.tip-text &nbsp;
+			div.inline
+				input(type="text",placeholder="请输入您的详细地址",class="middle-input")
+		a.submit
+			img(src="")
+		div.tip
+			p.text-center 注：年底物流繁忙，礼物将在年后尽快为您派送。
+script(language="javascript",src="{{ STATIC_URL }}js/bonus.min.js")
