@@ -19,6 +19,9 @@ window.onload = function() {
 		"during":150,
 		"loop":true
 	});
+	$(".left-btn").tap(function(){
+		$(".edit-body").velocity("fadeIn");
+	});
 }
 
 },{"../../bower_components/velocity/velocity.js":2,"../../bower_components/zepto/zepto.js":3,"../../bower_components/zeptojs/src/touch.js":4}],2:[function(require,module,exports){

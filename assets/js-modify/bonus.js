@@ -18,4 +18,7 @@ window.onload = function() {
 		"during":150,
 		"loop":true
 	});
+	$(".left-btn").tap(function(){
+		$(".edit-body").velocity("fadeIn");
+	});
 }
