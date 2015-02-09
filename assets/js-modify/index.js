@@ -5,13 +5,16 @@ window.onload = function() {
 	var line_width = $(".finger-image").width();
 	$(".line").css("width",line_width+"px");
 	$(".line").css("margin-left","-"+line_width/2+"px");
+	$(".touch-div").css("height",line_width+"px");
+	$(".touch-div").css("margin-left","-"+line_width/2+"px");
+	$(".touch-div").css("width",line_width+"px");
 	$(".line").velocity({
 		height:line_width+"px"
 	},{
 		duration:800,
 		loop:true
 	});
-	$(".finger-area").tap(function(){
+	$(".finger-area").longTap(function(){
 		location.href="/bonus";
 	});
 	$(".instruct").tap(function(){
@@ -19,5 +22,11 @@ window.onload = function() {
 	});
 	$(".instruction-close").tap(function(){
 		$(".instruction").velocity("fadeOut");
+	});
+	$(".touch-div").longTap(function(){
+		location.href="/bonus";
+	});
+	$(".line").longTap(function(){
+		location.href="/bonus";
 	});
 };

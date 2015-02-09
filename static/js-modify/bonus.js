@@ -24,4 +24,7 @@ window.onload = function() {
 	$(".again-mom").tap(function(){
 		location.href = "/index";
 	});
+	$(".right-btn").tap(function(){
+		$("#sharebox").velocity("fadeIn");
+	});
 }

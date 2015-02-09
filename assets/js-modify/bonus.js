@@ -5,15 +5,16 @@ window.onload = function() {
 	var coner_width = $(".coner").width();
 	var text_height = $(".bouns-center").height();
 	$(".coner").css({
-		"margin-top":-(coner_width-text_height)/2 + "px",
-		"margin-left":-coner_width/2 + "px"
+		"width":2*(coner_width-text_height) + text_height + "px",
+		"height":2*(coner_width-text_height) + text_height + "px",
+		"margin-top":"-"+(coner_width-text_height) + "px"
 	});
 	bigger = 5;
 	$(".coner").velocity({
-		"height":2*bigger+coner_width + "px",
-		"width":2*bigger+coner_width + "px",
-		"margin-left":-(coner_width/2 + bigger) + "px",
-		"margin-top":-(coner_width-text_height + bigger)/2 + "px"
+		"height":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
+		"width":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
+		"margin-left":-bigger + "px",
+		"margin-top":-(coner_width-text_height)-bigger + "px"
 	},{
 		"during":150,
 		"loop":true
@@ -23,5 +24,8 @@ window.onload = function() {
 	});
 	$(".again-mom").tap(function(){
 		location.href = "/index";
+	});
+	$(".right-btn").tap(function(){
+		$("#sharebox").velocity("fadeIn");
 	});
 }

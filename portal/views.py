@@ -12,15 +12,17 @@ def login(request):
 	return render(request,"login.html")
 
 def index(request):
-	if not request.session['openid']:
-		person_information = wx_login(appid,secret,request.GET['code'])
+	#try:
+	#	request.session['openid']
+	#except Exception,e:
+#		person_information = wx_login(appid,secret,request.GET['code'])
 		#refrash session
-		request.session['openid'] = person_information['openid']
+#		request.session['openid'] = person_information['openid']
 	return render(request,"index.html")
 
 def bonus(request):
-	prize = bonus_get(request.session['openid'],50,50,50)
-	print prize
+	#prize = bonus_get(request.session['openid'],50,50,50)
+	prize = "first"
 	return render(request,"bonus.html",{
 		"prize":prize
 	})

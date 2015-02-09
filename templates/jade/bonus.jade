@@ -1,6 +1,10 @@
 include ./lib/header.jade
 link(href="{{ STATIC_URL }}css/bonus.css",rel="stylesheet",type="text/css")
 body
+	div#sharebox
+		img(src="{{ STATIC_URL }}image/share-to-friend.png",class="share-title")
+		img(src="{{ STATIC_URL }}image/share-center.png",class="share-center")
+
 	section.title
 		img(src="{{ STATIC_URL }}image/six-month-logo.png",class="six-month-logo")
 		div.join-in
@@ -9,7 +13,8 @@ body
 			p.text-center “和妈妈一起美丽下厨”行动的参与者
 	section.body
 		div.bouns-center
-			img(src="{{ STATIC_URL }}image/coner.png",class="coner")
+			div.coner-wrapper
+				img(src="{{ STATIC_URL }}image/coner.png",class="coner")
 			div.first
 				p.text-center {% if prize == 'first' %}恭喜您{% elif prize == 'second' %}恭喜您{% else %}还差一点{% endif %}
 			div.second
@@ -25,6 +30,7 @@ body
 			img(src="{{ STATIC_URL }}image/{% if prize != 'NONE' %}help-mom-btn.png{% else %}again-mom-btn.png{% endif  %}")
 		a(class="right-btn")
 			img(src="{{ STATIC_URL }}image/share-btn.png")
+	
 	div.edit-body
 		div.edit-message
 			img.title(src="{{ STATIC_URL }}image/gift-for-mother-title.png",class="gift-title")
@@ -55,4 +61,5 @@ body
 				img(src="{{ STATIC_URL }}image/submit-form.png",class="submit-btn")
 			div.tip
 				p.text-center 注：年底物流繁忙，礼物将在年后尽快为您派送。
+	
 script(language="javascript",src="{{ STATIC_URL }}js/bonus.min.js")

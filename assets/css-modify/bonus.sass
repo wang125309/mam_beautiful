@@ -20,6 +20,21 @@
   height:1%;
   display:block;
 }
+#sharebox {
+  background:rgba(0,0,0,0.8);
+  position:absolute;
+  display:none;
+  height:100%;
+  width:100%;
+  z-index:200;
+  .share-title {
+    margin-top:6.5%;
+    width:95%;
+  }
+  .share-center {
+    width:80%;
+  }
+}
 body {
   background:#ffe7e7;
   font-family:first;
@@ -27,6 +42,7 @@ body {
   p {
     margin:0;
   }
+  
   section.title {
     position:absolute;
     width:100%;
@@ -56,6 +72,7 @@ body {
       color:#c4017d;
     }
   }
+  
   .bouns-center {
     p {
       color:#ff7abb;
@@ -72,9 +89,13 @@ body {
     }
     position:absolute;
     width:100%;
-    .coner{
+    .coner-wrapper {
+      width:100%;
+      height:100%;
       position:absolute;
-      height:120%;
+      .coner{
+        height:120%;
+      }
     }
   }
   section.footer {
@@ -117,56 +138,58 @@ body {
     height:100%;
     display:none;
     background:rgba(0,0,0,0.8);
-  }
-  .edit-message{
-    position:absolute;
-    background:#ffe7e7;
-    color:#ce2a90;
-    border:2vw solid #a4086b;
-    border-radius:10vw;
-    font-family:second;
-    width:81.5%;
-    font-size:3.7vw;
-    left:8.25%;
-    margin-top:40%;
-    .gift-title {
+  
+    .edit-message{
+      position:absolute;
+      background:#ffe7e7;
+      color:#ce2a90;
+      border:2vw solid #a4086b;
+      border-radius:10vw;
+      font-family:second;
       width:81.5%;
-      margin-top:-20%;
+      font-size:3.7vw;
+      left:8.25%;
+      margin-top:40%;
+      .gift-title {
+        width:81.5%;
+        margin-top:-20%;
+      }
+      .little-input {
+        width:7.9vw;
+        height:5.9vh;
+      }
+      .middle-input {
+        width:50.3vw;
+        height:5.9vh;
+      }
+      input {
+        background:#fcdddd;
+        border:1px solid #f3cfcf;
+      }
+      .inline {
+        float:left;
+        line-height:5.9vh;
+      }
+      .tip-text {
+        width:30%;
+      }
+      .name .inline {
+        letter-spacing:0.2vw;
+      }
+      .phone .inline {
+        letter-spacing:1.3vw;
+      }
+      .address .inline {
+        letter-spacing:1.3vw;
+      }
+      > div {
+        margin-top:2vh;
+        margin-bottom:2vh;
+      }
+      .submit-btn {
+        width:33%;
+      }
     }
-    .little-input {
-      width:7.9vw;
-      height:5.9vh;
-    }
-    .middle-input {
-      width:50.3vw;
-      height:5.9vh;
-    }
-    input {
-      background:#fcdddd;
-      border:1px solid #f3cfcf;
-    }
-    .inline {
-      float:left;
-      line-height:5.9vh;
-    }
-    .tip-text {
-      width:30%;
-    }
-    .name .inline {
-      letter-spacing:0.2vw;
-    }
-    .phone .inline {
-      letter-spacing:1.3vw;
-    }
-    .address .inline {
-      letter-spacing:1.3vw;
-    }
-    > div {
-      margin-top:2vh;
-      margin-bottom:2vh;
-    }
-    .submit-btn {
-      width:33%;
-    }
-  }
+  } 
 }
+  

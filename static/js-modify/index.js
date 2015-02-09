@@ -11,7 +11,7 @@ window.onload = function() {
 		duration:800,
 		loop:true
 	});
-	$(".finger-area").tap(function(){
+	$(".finger-area").longTap(function(){
 		location.href="/bonus";
 	});
 	$(".instruct").tap(function(){
@@ -19,5 +19,8 @@ window.onload = function() {
 	});
 	$(".instruction-close").tap(function(){
 		$(".instruction").velocity("fadeOut");
+	});
+	$(".line").longTap(function(){
+		location.href="/bonus";
 	});
 };
