@@ -11,18 +11,18 @@ body
 		div.bouns-center
 			img(src="{{ STATIC_URL }}image/coner.png",class="coner")
 			div.first
-				p.text-center 123
+				p.text-center {% if prize == 'first' %}恭喜您{% elif prize == 'second' %}恭喜您{% else %}还差一点{% endif %}
 			div.second
-				p.text-center 123
+				p.text-center {% if prize == 'first' %}获得六月鲜新年礼包{% elif prize == 'second' %}获得六月鲜特技淡盐酱油{% else %}就能为妈妈赢取{% endif %}
 			div.third
-				p.text-center 123
+				p.text-center {% if prize == 'first' %}为妈妈送出健康{% elif prize == 'second' %}为妈妈制造一份清咸{% else %}六月鲜新年礼包{% endif %}
 			div.fourth
-				p.text-center 123
+				p.text-center {% if prize == 'first' %}美丽的新年祝福{% elif prize == 'second' %}让妈妈与健康相伴{% else %}再一次加入行动吧{% endif %}
 	section.footer
 		div(class="bottom-color")=""
 		img(src="{{ STATIC_URL }}image/girl_and_woman.png",class="girl-and-woman")
-		a(class="left-btn")
-			img(src="{{ STATIC_URL }}image/help-mom-btn.png")
+		a(class="{% if prize != 'NONE' %}help-mom{% else %}again-mom{% endif %} left-btn")
+			img(src="{{ STATIC_URL }}image/{% if prize != 'NONE' %}help-mom-btn.png{% else %}again-mom-btn.png{% endif  %}")
 		a(class="right-btn")
 			img(src="{{ STATIC_URL }}image/share-btn.png")
 	div.edit-body

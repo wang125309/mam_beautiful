@@ -19,8 +19,11 @@ window.onload = function() {
 		"during":150,
 		"loop":true
 	});
-	$(".left-btn").tap(function(){
+	$(".help-mom").tap(function(){
 		$(".edit-body").velocity("fadeIn");
+	});
+	$(".again-mom").tap(function(){
+		location.href = "/index";
 	});
 }
 

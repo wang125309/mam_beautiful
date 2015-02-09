@@ -21,7 +21,7 @@ gulp.task('sass',function(){
         .pipe(gulp.dest('./assets/css'));
 });
 
-var js_files = ['index','bonus'];
+var js_files = ['login','index','bonus'];
 
 gulp.task('js',function(){
     for (i in js_files) {
