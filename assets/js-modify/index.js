@@ -1,6 +1,7 @@
 require('../../bower_components/zepto/zepto.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
+require('./share.js');
 window.onload = function() {
 	var line_width = $(".finger-image").width();
 	$(".line").css("width",line_width+"px");
@@ -17,6 +18,8 @@ window.onload = function() {
 	$(".finger-area").longTap(function(){
 		location.href="/bonus";
 	});
+	var ih = document.documentElement.clientHeight*0.9;
+	$(".instruction-close").css("margin-top",ih*0.08+"px");
 	$(".instruct").tap(function(){
 		$(".instruction").velocity("fadeIn");
 	});

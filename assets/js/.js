@@ -1,10 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('../../bower_components/zepto/zepto.js');
+require('./share.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
+
 window.onload = function() {
 	var coner_width = $(".coner").width();
 	var text_height = $(".bouns-center").height();
+
 	$(".coner").css({
 		"width":2*(coner_width-text_height) + text_height + "px",
 		"height":2*(coner_width-text_height) + text_height + "px",
@@ -29,9 +32,97 @@ window.onload = function() {
 	$(".right-btn").tap(function(){
 		$("#sharebox").velocity("fadeIn");
 	});
+	$("#submit").tap(function(){
+		$.post("/edit/",{
+			"name":$("#name").val(),
+			"phone":$("#phone").val(),
+			"province":$("#province").val(),
+			"city":$("#city").val(),
+			"area":$("#area").val(),
+			"address":$("#address").val()
+		},function(data){
+			if(data.status == 'phone error')	{
+				//phone error
+				$(".alert").text("手机号格式有误");
+				setTimeout(function(){
+					$(".alert").text("");
+				},1000);
+			}
+			else if(data.status == 'empty error') {
+				//empty
+				$(".alert").text("请填全信息哦");
+				setTimeout(function(){
+					$(".alert").text("");
+				},1000);
+			}
+			else if(data.status == 'correct')	{
+				//success
+				$(".edit-body").velocity("fadeOut",function(){
+
+					$("#submit-success").velocity("fadeIn");
+
+				});
+				
+			}
+		});	
+	});
+	$(".share-btn").tap(function(){
+		$("#sharebox").velocity("fadeIn");
+	});
 }
 
-},{"../../bower_components/velocity/velocity.js":2,"../../bower_components/zepto/zepto.js":3,"../../bower_components/zeptojs/src/touch.js":4}],2:[function(require,module,exports){
+},{"../../bower_components/velocity/velocity.js":3,"../../bower_components/zepto/zepto.js":4,"../../bower_components/zeptojs/src/touch.js":5,"./share.js":2}],2:[function(require,module,exports){
+$(function(){
+	$.post("/wxconfig/",{
+		"url":location.href
+	},
+	function(data){
+		wx.config(data);
+		wx.ready(function(){
+			$.get("/click/",function(data){
+				wx.onMenuShareTimeline({
+					title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
+					link:'http://bl.limijiaoyin.com/login/',
+					imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
+				});
+				wx.onMenuShareAppMessage({
+					title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
+					link:'http://bl.limijiaoyin.com/login/',
+					imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
+				});
+			});
+		});
+		wx.success(function(){
+			
+		});
+		wx.error(function(){
+			$.get("/update_access_token/",function(data){
+				$.get("/wxconfig/",function(data){
+					wx.config(data);
+					wx.ready(function(){
+						$.get("/click/",function(data){
+							wx.onMenuShareTimeline({
+								title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
+								link:'http://bl.limijiaoyin.com/login/',
+								imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
+							});
+							wx.onMenuShareAppMessage({
+								title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
+								link:'http://bl.limijiaoyin.com/login/',
+								imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
+							});
+						});	
+					});
+				});
+			});
+		});
+
+	});
+	
+});
+
+
+},{}],3:[function(require,module,exports){
 /*! VelocityJS.org (1.2.1). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
 
 /*************************
@@ -3900,7 +3991,7 @@ return function (global, window, document, undefined) {
 /* The CSS spec mandates that the translateX/Y/Z transforms are %-relative to the element itself -- not its parent.
 Velocity, however, doesn't make this distinction. Thus, converting to or from the % unit with these subproperties
 will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /* Zepto v1.1.6 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
@@ -5490,7 +5581,7 @@ window.$ === undefined && (window.$ = Zepto)
 })(Zepto)
 ;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 //     Zepto.js
 //     (c) 2010-2014 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.

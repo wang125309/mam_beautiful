@@ -8,7 +8,10 @@ body
 	section.title
 		img(src="{{ STATIC_URL }}image/six-month-logo.png",class="six-month-logo")
 		div.join-in
-			p.text-center 您是第x位加入
+			p.text-center 
+				span 您是第
+				span.num {{cal}}
+				span 位加入
 		div.join-in-second
 			p.text-center “和妈妈一起美丽下厨”行动的参与者
 	section.body
@@ -32,34 +35,45 @@ body
 			img(src="{{ STATIC_URL }}image/share-btn.png")
 	
 	div.edit-body
-		div.edit-message
-			img.title(src="{{ STATIC_URL }}image/gift-for-mother-title.png",class="gift-title")
-			div.name.clearfix
-				div.inline.tip-text 领奖人姓名
-				div.inline 
-					input(type="text",placeholder="请输入您的姓名",class="middle-input")
-			div.phone.clearfix
-				div.inline.tip-text 联系电话
-				div.inline 
-					input(type="text",placeholder="请输入您的电话号码",class="middle-input")
-			div.address.clearfix
-				div.inline.tip-text 收货地址
-				div.inline 
-					input(type="text",class="little-input")
-				div.inline 省
-				div.inline 
-					input(type="text",class="little-input")
-				div.inline 市
-				div.inline 
-					input(type="text",class="little-input")
-				div.inline 区/县
-			div.address-detail.clearfix
-				div.inline.tip-text &nbsp;
-				div.inline
-					input(type="text",placeholder="请输入您的详细地址",class="middle-input")
-			a.submit
-				img(src="{{ STATIC_URL }}image/submit-form.png",class="submit-btn")
-			div.tip
-				p.text-center 注：年底物流繁忙，礼物将在年后尽快为您派送。
-	
+		form(name="edit",id="edit")
+			div.edit-message
+				img.title(src="{{ STATIC_URL }}image/gift-for-mother-title.png",class="gift-title")
+				div.name.clearfix
+					div.inline.tip-text 领奖人姓名
+					div.inline 
+						input(type="text",placeholder="请输入您的姓名",class="middle-input",name="name",id="name")
+				div.phone.clearfix
+					div.inline.tip-text 联系电话
+					div.inline 
+						input(type="text",placeholder="请输入您的电话号码",class="middle-input",name="phone",id="phone")
+				div.address.clearfix
+					div.inline.tip-text 收货地址
+					div.inline 
+						input(type="text",class="little-input",name="province",id="province")
+					div.inline 省
+					div.inline 
+						input(type="text",class="little-input",name="city",id="city")
+					div.inline 市
+					div.inline 
+						input(type="text",class="little-input",name="area",id="area")
+					div.inline 区/县
+				div.address-detail.clearfix
+					div.inline.tip-text &nbsp;
+					div.inline
+						input(type="text",placeholder="请输入您的详细地址",class="middle-input",name="address",id="address")
+				
+				div.alert=""
+				a.submit(href="javascript:;",id="submit")
+					img(src="{{ STATIC_URL }}image/submit-form.png",class="submit-btn")
+
+				div.tip
+					p.text-center 注：年底物流繁忙，礼物将在年后尽快为您派送。
+	div#submit-success
+		div.background
+			img.title(src="{{ STATIC_URL }}image/submit-success.png")
+			div.button
+				a(class="share-btn")
+					img(src="{{ STATIC_URL }}image/share-btn.png")
+
+script(language="javascript",src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js")
 script(language="javascript",src="{{ STATIC_URL }}js/bonus.min.js")
