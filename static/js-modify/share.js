@@ -9,12 +9,12 @@ $(function(){
 				wx.onMenuShareTimeline({
 					title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
 					link:'http://bl.limijiaoyin.com/login/',
-					imgUrl:'/static/image/share-center.png'
+					imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
 				});
 				wx.onMenuShareAppMessage({
 					title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
 					link:'http://bl.limijiaoyin.com/login/',
-					imgUrl:'/static/image/share-center.png'
+					imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
 				});
 			});
 		});
@@ -30,12 +30,12 @@ $(function(){
 							wx.onMenuShareTimeline({
 								title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
 								link:'http://bl.limijiaoyin.com/login/',
-								imgUrl:'/static/image/share-center.png'
+								imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
 							});
 							wx.onMenuShareAppMessage({
 								title:'我是第'+data.num+'位加⼊入“和妈妈⼀一起 美丽下厨”⾏行动的参与者,我 为妈妈赢取六⽉月鲜新年礼包',
 								link:'http://bl.limijiaoyin.com/login/',
-								imgUrl:'/static/image/share-center.png'
+								imgUrl:'http://bl.limijiaoyin.com/static/image/share-center.png'
 							});
 						});	
 					});

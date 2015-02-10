@@ -1,7 +1,8 @@
 require('../../bower_components/zepto/zepto.js');
+require('./share.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
-require('./share.js');
+
 window.onload = function() {
 	var coner_width = $(".coner").width();
 	var text_height = $(".bouns-center").height();
