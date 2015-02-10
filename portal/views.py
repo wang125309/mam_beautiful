@@ -32,6 +32,7 @@ def wxconfig(request):
 	js_ticket = Wx.objects.get(id=1).js_ticket
 	s = sign(js_ticket,url)
 	json = {
+			"debug":true,
 		"appId":appid,
 		"timestamp":s['timestamp'],
 		"nonceStr":'nameLR9969',
