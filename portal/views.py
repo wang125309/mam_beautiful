@@ -46,11 +46,10 @@ def update_access_token(request):
 		"status":"success"
 	})
 def bonus(request):
-	#prize = bonus_get(request.session['openid'],request.session['nickname'])
+	prize = bonus_get(request.session['openid'],request.session['nickname'])
 	cal = Calculate.objects.get(id=1)
 	cal.total = cal.total + 1
 	cal.save()
-	prize = "NONE"
 	return render(request,"bonus.html",{
 		"prize":prize,
 		"cal":cal.total
