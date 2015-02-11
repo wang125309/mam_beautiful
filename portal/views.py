@@ -32,7 +32,6 @@ def wxconfig(request):
 	js_ticket = Wx.objects.get(id=1).js_ticket
 	s = sign(js_ticket,url)
 	json = {
-			"debug":"true",
 		"appId":appid,
 		"timestamp":s['timestamp'],
 		"nonceStr":'nameLR9969',
@@ -47,11 +46,10 @@ def update_access_token(request):
 		"status":"success"
 	})
 def bonus(request):
-	#prize = bonus_get(request.session['openid'],request.session['nickname'])
+	prize = bonus_get(request.session['openid'],request.session['nickname'])
 	cal = Calculate.objects.get(id=1)
 	cal.total = cal.total + 1
 	cal.save()
-	prize = "second"
 	return render(request,"bonus.html",{
 		"prize":prize,
 		"cal":cal.total
