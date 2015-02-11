@@ -1,10 +1,10 @@
 @import "../../bower_components/normalize.css/normalize.css";
 @font-face {
-  font-family:second;
+  font-family:first;
   src:url('first.ttf');
 }
 @font-face {
-  font-family:first;
+  font-family:second;
   src:url('second.ttf');
 }
 .clearfix:after {
@@ -178,35 +178,51 @@ body {
       position:absolute;
       background:#ffe7e7;
       color:#ce2a90;
-      border:2vw solid #a4086b;
+      border:8px solid #a4086b;
       border-radius:10vw;
       font-family:second;
       width:81.5%;
       font-size:3.7vw;
       left:8.25%;
-      margin-top:40%;
+      margin-top:25%;
       .gift-title {
         width:81.5%;
         margin-top:-20%;
       }
       .little-input {
-        width:7.9vw;
-        height:5.9vh;
+        width:12%;
       }
       .middle-input {
-        width:50.3vw;
-        height:5.9vh;
+        width:100%;
       }
       input {
         background:#fcdddd;
         border:1px solid #f3cfcf;
+        height:35px;
       }
       .inline {
         float:left;
-        line-height:5.9vh;
+        width:65%;
+        .inline-detail {
+
+        }
+      }
+      .detail-area {
+        max-width:87%;
+      }
+
+      .inline-detail {
+        display:inline;
+      }
+      .inline-p {
+        display:inline;
+      }
+      .text {
+        display:inline;
       }
       .tip-text {
         width:30%;
+        line-height:200%;
       }
       .name .inline {
         letter-spacing:0.2vw;
@@ -220,6 +236,7 @@ body {
       > div {
         margin-top:2vh;
         margin-bottom:2vh;
+        line-height:200%;
       }
       .submit-btn {
         width:33%;

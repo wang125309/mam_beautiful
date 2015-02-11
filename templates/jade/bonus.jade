@@ -48,15 +48,19 @@ body
 						input(type="text",placeholder="请输入您的电话号码",class="middle-input",name="phone",id="phone")
 				div.address.clearfix
 					div.inline.tip-text 收货地址
-					div.inline 
-						input(type="text",class="little-input",name="province",id="province")
-					div.inline 省
-					div.inline 
-						input(type="text",class="little-input",name="city",id="city")
-					div.inline 市
-					div.inline 
-						input(type="text",class="little-input",name="area",id="area")
-					div.inline 区/县
+					div.detail-area
+						div.inline-detail
+							div.inline-p 
+								input(type="text",class="little-input",name="province",id="province")
+							div.text 省
+						div.inline-detail
+							div.inline-p 
+								input(type="text",class="little-input",name="city",id="city")
+							div.text 市
+						div.inline-detail
+							div.inline-p 
+								input(type="text",class="little-input",name="area",id="area")
+							div.text 区/县
 				div.address-detail.clearfix
 					div.inline.tip-text &nbsp;
 					div.inline
