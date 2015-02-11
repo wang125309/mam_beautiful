@@ -50,6 +50,7 @@ def bonus(request):
 	cal = Calculate.objects.get(id=1)
 	cal.total = cal.total + 1
 	cal.save()
+	#prize = "NONE"
 	return render(request,"bonus.html",{
 		"prize":prize,
 		"cal":cal.total
