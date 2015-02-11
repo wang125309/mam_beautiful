@@ -28,7 +28,7 @@ body
 	section.footer
 		div(class="bottom-color")=""
 		img(src="{{ STATIC_URL }}image/girl_and_woman.png",class="girl-and-woman")
-		a(class="{% if prize != 'NONE' %}help-mom{% else %}again-mom{% endif %} left-btn")
+		a(class="{% if prize != 'NONE' %}help-mom{% else %}again-mom{% endif %} left-btn",href="{% if prize == 'NONE' %}http://slide.limijiaoyin.com/slides/mama#p0{% else %}javascript:;{% endif %}")
 			img(src="{{ STATIC_URL }}image/{% if prize != 'NONE' %}help-mom-btn.png{% else %}again-mom-btn.png{% endif  %}")
 		a(class="right-btn")
 			img(src="{{ STATIC_URL }}image/share-btn.png")
