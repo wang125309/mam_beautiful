@@ -14,12 +14,14 @@ def login(request):
 	return render(request,"login.html")
 
 def index(request):
-	
-	person_information = wx_login(appid,secret,request.GET['code'])
-	#refrash session
-	request.session['openid'] = person_information['openid']
-	request.session['nickname'] = person_information['nickname'].encode("utf8")
-	
+	try:
+		request.session['openid']
+		request.session['nickname']
+	except Exception,e:
+		person_information = wx_login(appid,secret,request.GET['code'])
+		#refrash session
+		request.session['openid'] = person_information['openid']
+		request.session['nickname'] = person_information['nickname'].encode("utf8")
 	return render(request,"index.html")
 def click(request):
 	return JsonResponse({
