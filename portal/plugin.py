@@ -74,9 +74,10 @@ def bonus_get(openid,nickname):
 		c = Calculate.objects.get(id=1)
 		percent = c.percent
 		first_prize_percent = c.firstpercent
+		
 		ran = random.randint(0,100)
 		if ran < percent :
-			ran_per = random.randint(0,100)
+			ran_per = random.randint(0,c.total)
 			prize = "NONE"
 			if ran_per < first_prize_percent:
 				prize = "first"
