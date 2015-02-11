@@ -80,12 +80,14 @@ def bonus_get(openid,nickname):
 			ran_per = random.randint(0,c.bonusnum)
 			prize = "NONE"
 			if ran_per < first_prize_percent:
+				c.firstpercent = c.firstpercent - 1
 				prize = "first"
 			else:
 				prize = "second"
 			u = User(openid=openid,prize=prize,dateline=time.time(),nickname=nickname)
 			u.save()
 			c.bonusnum = c.bonusnum - 1
+			
 			c.save()
 			return prize
 		else:
