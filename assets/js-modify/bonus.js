@@ -26,7 +26,7 @@ window.onload = function() {
 		$(".edit-body").velocity("fadeIn");
 	});
 	$(".again-mom").tap(function(){
-		location.href = "/index";
+		location.href = "http://slide.limijiaoyin.com/slides/mama#p0";
 	});
 	$(".right-btn").tap(function(){
 		$("#sharebox").velocity("fadeIn");

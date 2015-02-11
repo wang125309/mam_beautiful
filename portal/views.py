@@ -62,7 +62,7 @@ def edit(request):
 	city = request.POST['city']
 	area = request.POST['area']
 	address = request.POST['address']
-	if not name.strip() or not phone.strip() or not province.strip() or not city.strip() or not area.strip() or not address.strip():
+	if not name.strip() or not phone.strip() or not city.strip() or not area.strip() or not address.strip():
 		return JsonResponse({"status":"empty error"})
 	if len(phone.strip()) != 11:
 		return JsonResponse({"status":"phone error"})

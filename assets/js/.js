@@ -27,7 +27,7 @@ window.onload = function() {
 		$(".edit-body").velocity("fadeIn");
 	});
 	$(".again-mom").tap(function(){
-		location.href = "/index";
+		location.href = "http://slide.limijiaoyin.com/slides/mama#p0";
 	});
 	$(".right-btn").tap(function(){
 		$("#sharebox").velocity("fadeIn");
@@ -121,7 +121,13 @@ $(function(){
 		});
 
 	});
-	
+	var _hmt = _hmt || [];
+	(function() {
+		var hm = document.createElement("script");
+		hm.src = "//hm.baidu.com/hm.js?9259921e9b5b8723b697038282b1a964";
+		var s = document.getElementsByTagName("script")[0]; 
+		s.parentNode.insertBefore(hm, s);
+	})();
 });
 
 
