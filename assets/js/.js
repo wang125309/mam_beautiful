@@ -83,7 +83,7 @@ $(function(){
 				wx.onMenuShareTimeline({
 					title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
 					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+					imgUrl:'/static/image/share-center.png',
 					success: function(){
 						$("#sharebox").velocity("fadeOut");
 						$(".edit-body").velocity("fadeOut");
@@ -93,7 +93,7 @@ $(function(){
 					title:'和妈妈一起美丽下厨',
 					desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
 					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+					imgUrl:'/static/image/share-center.png',
 					success:function(){
 						$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");
@@ -112,7 +112,7 @@ $(function(){
 								wx.onMenuShareTimeline({
 									title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
 									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+									imgUrl:'/static/image/share-center.png',
 									success:function(){
 										$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");
@@ -123,7 +123,7 @@ $(function(){
 									title:'和妈妈一起美丽下厨',
 									desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
 									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+									imgUrl:'/static/image/share-center.png',
 									success:function(){
 											$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");

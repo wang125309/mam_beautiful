@@ -75,7 +75,7 @@ def bonus_get(openid,nickname):
 		percent = c.percent
 		first_prize_percent = c.firstpercent
 		
-		ran = random.randint(0,100)
+		ran = random.randint(0,1000)
 		if ran < percent :
 			ran_per = random.randint(0,c.bonusnum)
 			prize = "NONE"
