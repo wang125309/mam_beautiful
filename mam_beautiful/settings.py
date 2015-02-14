@@ -59,9 +59,9 @@ WSGI_APPLICATION = 'mam_beautiful.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django_mysqlpool.backends.mysqlpool',
-        'NAME': 'mombeautiful',
+        'NAME': 'lovestudy',
         'USER': 'root',
-        'PASSWORD': 'nameLR9969',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306'
     }

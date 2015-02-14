@@ -1,38 +1,26 @@
 include ./lib/header.jade
 link(href="{{ STATIC_URL }}css/index.css",rel="stylesheet",type="text/css")
 body
-	section.title
-		img(src="{{ STATIC_URL }}image/six-month-logo.png",class="six-month-logo")
-		div.this-year 
-			p.text-center 今年春节
-		div.give-mom-best 
-			p.text-center 我们把“最好”送给妈妈
-		div.with-mom 
-			p.text-center 和妈妈一起
-			p.text-center 美丽下厨
-	section.body
-		div.finger
-			a.finger-area
-				img.finger-image(src="{{ STATIC_URL }}image/finger.png")
-			div(class="line")=""
-			div(class="touch-div")=""
-		div.finger-instruction
-			span 按下手印 加入行动
-		div.win-text-first
-			p 为妈妈赢取
-		div.win-text-second
-			p 六月鲜携手著名设计师
-		div.win-text-third
-			p 打造的美丽厨装
-	a.instruct(href="javascript:;")
-		img(src="{{STATIC_URL}}image/instruction-icon.png",class="instruction-btn")
-	img(src="{{ STATIC_URL }}image/girl_and_woman.png",class="girl-and-woman")
-	img(src="{{ STATIC_URL }}image/soy-bottle.png",class="soy-bottle")
-	footer(class="bottom-color")=""
-	
-	div.instruction
-		img(src="{{ STATIC_URL }}image/instruction.png",class="instruction-img")
-		img(src="{{ STATIC_URL }}image/instruction-close.png",class="instruction-close")
+    input#move(type="hidden",value="0")
+    section.title
+        div.logo
+            img#logo(src="{{ STATIC_URL }}image/logo.png")
+    section.middle
+
+        div.finger
+            img.finger-center(src="{{ STATIC_URL }}image/finger_center.png")
+        img.roo(src="{{ STATIC_URL }}image/roo.gif")
+        img.map(src="{{ STATIC_URL }}image/map.png")
+    section.footer
+        div.btn-bar
+            div.btn-line
+                a#join(href="javascript:;")
+                    img(src="{{ STATIC_URL }}image/I_want_join.png")
+            div.btn-line
+                a#instruction
+                    img(src="{{ STATIC_URL }}image/instruction.png")
+                div.message=""
+                
 script(language="javascript",src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js")
 script(language="javascript",src="{{ STATIC_URL }}js/index.min.js")
 

@@ -2,113 +2,61 @@
 require('../../bower_components/zepto/zepto.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
-require('./share.js');
-window.onload = function() {
-	var line_width = $(".finger-image").width();
-	$(".line").css("width",line_width+"px");
-	$(".line").css("margin-left","-"+line_width/2+"px");
-	$(".touch-div").css("height",line_width+"px");
-	$(".touch-div").css("margin-left","-"+line_width/2+"px");
-	$(".touch-div").css("width",line_width+"px");
-	$(".line").velocity({
-		height:line_width+"px"
-	},{
-		duration:800,
-		loop:true
-	});
-	$(".finger-area").tap(function(){
-		location.href="/bonus";
-	});
-	var ih = document.documentElement.clientHeight*0.9;
-	$(".instruction-close").css("margin-top",ih*0.08+"px");
-	$(".instruct").tap(function(){
-		$(".instruction").velocity("fadeIn");
-	});
-	$(".instruction-close").tap(function(){
-		$(".instruction").velocity("fadeOut");
-	});
-	$(".touch-div").tap(function(){
-		location.href="/bonus";
-	});
-	$(".line").tap(function(){
-		location.href="/bonus";
-	});
-};
 
-},{"../../bower_components/velocity/velocity.js":3,"../../bower_components/zepto/zepto.js":4,"../../bower_components/zeptojs/src/touch.js":5,"./share.js":2}],2:[function(require,module,exports){
 $(function(){
-	$.post("/wxconfig/",{
-		"url":location.href
-	},
-	function(data){
-		wx.config(data);
-		wx.ready(function(){
-			$.get("/click/",function(data){
-				wx.onMenuShareTimeline({
-					title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
-					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-					success: function(){
-						$("#sharebox").velocity("fadeOut");
-						$(".edit-body").velocity("fadeOut");
-					},
-				});
-				wx.onMenuShareAppMessage({
-					title:'和妈妈一起美丽下厨',
-					desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
-					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-					success:function(){
-						$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
-
-					},
-				});
-			});
-			wx.error(function(res){
-				$.get("/update_access_token/",function(data){
-					$.post("/wxconfig/",{
-						"url":location.href
-						},function(data){
-							wx.config(data);
-							wx.ready(function(){
-							$.get("/click/",function(data){
-								wx.onMenuShareTimeline({
-									title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
-									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-									success:function(){
-										$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
-
-									},
-								});
-								wx.onMenuShareAppMessage({
-									title:'和妈妈一起美丽下厨',
-									desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
-									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-									success:function(){
-											$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
-
-									},
-								});
-							
-							});	
-						});
-					});
-				});
-			});
-
-		});
-
-
-	});
+    map_width = $(".map").width();
+    map_height = $(".map").height();
+    console.log(map_width+" "+map_height);
+    point = new Array();
+    point[0] = [0.855,0.89,"go"]; 
+    point[1] = [0.523,0.671,"bag_100"];
+    point[2] = [0.285,0.752,"bag_20"];
+    point[3] = [0.040,0.663,"bag_0"];
+    point[4] = [0.122,0.438,"apple"];
+    point[5] = [0.010,0.158,"iphone6"];
+    point[6] = [0.133,0.169,"bag_20"];
+    point[7] = [0.095,0.016,"bag_100"];
+    point[8] = [0.308,-0.039,"bag_20"];
+    point[9] = [0.477,0.074,"bag_0"];
+    point[10] = [0.737,0.033,"bag_200"];
+    point[11] = [0.662,0.152,"apple"];
+    point[12] = [0.846,0.282,"bag_20"];
+    point[13] = [0.799,0.442,"bag_100"];
+    point[14] = [0.870,0.615,"bag_20"];
+    for(i=0;i<15;i++){
+        $("<div id='p_"+i+"'><img style='width:"+map_width*0.1325+"px' src='/static/image/"+point[i][2]+".png'/></div>").insertAfter($(".map"));
+        $("#p_"+i).css({
+            "position":"absolute",
+            "left":"5%",
+            "margin-left":point[i][0]*map_width+"px",
+            "top":point[i][1]*map_height+"px"
+        });
+    }
+    pos = $("#move").val();
+    $(".roo").css({
+        "margin-left":point[pos][0]*map_width+"px",
+        "top":(point[pos][1]-0.19)*map_height+"px"
+    });
+    var move = function(point,now,num) {
+        if(num == 0) {
+            return ;
+        }
+        $(".roo").velocity({
+            "margin-left":point[now+1][0]*map_height+"px",
+            "top":(point[now+1][1]-0.19)*map_height + "px"
+        },1500,function(){
+            $("#move").val(now+1);
+            move(point,now+1,num-1);
+        });
+        
+    }
+    $(".finger").tap(function(){
+        pos = $("#move").val();
+        move(point,parseInt(pos),2);
+    });
 });
 
-
-},{}],3:[function(require,module,exports){
+},{"../../bower_components/velocity/velocity.js":2,"../../bower_components/zepto/zepto.js":3,"../../bower_components/zeptojs/src/touch.js":4}],2:[function(require,module,exports){
 /*! VelocityJS.org (1.2.1). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
 
 /*************************
@@ -3977,7 +3925,7 @@ return function (global, window, document, undefined) {
 /* The CSS spec mandates that the translateX/Y/Z transforms are %-relative to the element itself -- not its parent.
 Velocity, however, doesn't make this distinction. Thus, converting to or from the % unit with these subproperties
 will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /* Zepto v1.1.6 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
@@ -5567,7 +5515,7 @@ window.$ === undefined && (window.$ = Zepto)
 })(Zepto)
 ;
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 //     Zepto.js
 //     (c) 2010-2014 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
@@ -5734,7 +5682,52 @@ window.$ === undefined && (window.$ = Zepto)
   })
 })(Zepto)
 
-},{}]},{},[1])                  if (touch.el) touch.el.trigger('singleTap')
+},{}]},{},[1])  touch.y2 = firstTouch.pageY
+
+        deltaX += Math.abs(touch.x1 - touch.x2)
+        deltaY += Math.abs(touch.y1 - touch.y2)
+      })
+      .on('touchend MSPointerUp pointerup', function(e){
+        if((_isPointerType = isPointerEventType(e, 'up')) &&
+          !isPrimaryTouch(e)) return
+        cancelLongTap()
+
+        // swipe
+        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
+            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
+
+          swipeTimeout = setTimeout(function() {
+            touch.el.trigger('swipe')
+            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            touch = {}
+          }, 0)
+
+        // normal tap
+        else if ('last' in touch)
+          // don't fire tap when delta position changed by more than 30 pixels,
+          // for instance when moving to a point and back to origin
+          if (deltaX < 30 && deltaY < 30) {
+            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
+            // ('tap' fires before 'scroll')
+            tapTimeout = setTimeout(function() {
+
+              // trigger universal 'tap' with the option to cancelTouch()
+              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+              var event = $.Event('tap')
+              event.cancelTouch = cancelAll
+              touch.el.trigger(event)
+
+              // trigger double tap immediately
+              if (touch.isDoubleTap) {
+                if (touch.el) touch.el.trigger('doubleTap')
+                touch = {}
+              }
+
+              // trigger single tap after 250ms of inactivity
+              else {
+                touchTimeout = setTimeout(function(){
+                  touchTimeout = null
+                  if (touch.el) touch.el.trigger('singleTap')
                   touch = {}
                 }, 250)
               }

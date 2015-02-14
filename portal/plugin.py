@@ -3,7 +3,6 @@ import random
 import json
 import requests
 import logging
-import redis
 import time
 import hashlib
 logger = logging.getLogger(__name__)
