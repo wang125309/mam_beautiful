@@ -1,75 +1,39 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('../../bower_components/zepto/zepto.js');
-require('./share.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
-
+require('./share.js');
 window.onload = function() {
-	var coner_width = $(".coner").width();
-	var text_height = $(".bouns-center").height();
-
-	$(".coner").css({
-		"width":2*(coner_width-text_height) + text_height + "px",
-		"height":2*(coner_width-text_height) + text_height + "px",
-		"margin-top":"-"+(coner_width-text_height) + "px"
-	});
-	bigger = 5;
-	$(".coner").velocity({
-		"height":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
-		"width":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
-		"margin-left":-bigger + "px",
-		"margin-top":-(coner_width-text_height)-bigger + "px"
+	var line_width = $(".finger-image").width();
+	$(".line").css("width",line_width+"px");
+	$(".line").css("margin-left","-"+line_width/2+"px");
+	$(".touch-div").css("height",line_width+"px");
+	$(".touch-div").css("margin-left","-"+line_width/2+"px");
+	$(".touch-div").css("width",line_width+"px");
+	$(".line").velocity({
+		height:line_width+"px"
 	},{
-		"during":150,
-		"loop":true
+		duration:800,
+		loop:true
 	});
-	$(".help-mom").tap(function(){
-		$(".edit-body").velocity("fadeIn");
+	$(".finger-area").tap(function(){
+		location.href="/bonus";
 	});
-	$(".again-mom").tap(function(){
-		location.href = "http://slide.limijiaoyin.com/slides/mama#p0";
+	var ih = document.documentElement.clientHeight*0.9;
+	$(".instruction-close").css("margin-top",ih*0.08+"px");
+	$(".instruct").tap(function(){
+		$(".instruction").velocity("fadeIn");
 	});
-	$(".right-btn").tap(function(){
-		$("#sharebox").velocity("fadeIn");
+	$(".instruction-close").tap(function(){
+		$(".instruction").velocity("fadeOut");
 	});
-	$("#submit").tap(function(){
-		$.post("/edit/",{
-			"name":$("#name").val(),
-			"phone":$("#phone").val(),
-			"province":$("#province").val(),
-			"city":$("#city").val(),
-			"area":$("#area").val(),
-			"address":$("#address").val()
-		},function(data){
-			if(data.status == 'phone error')	{
-				//phone error
-				$(".alert").text("手机号格式有误");
-				setTimeout(function(){
-					$(".alert").text("");
-				},1000);
-			}
-			else if(data.status == 'empty error') {
-				//empty
-				$(".alert").text("请填全信息哦");
-				setTimeout(function(){
-					$(".alert").text("");
-				},1000);
-			}
-			else if(data.status == 'correct')	{
-				//success
-				$(".edit-body").velocity("fadeOut",function(){
-
-					$("#submit-success").velocity("fadeIn");
-
-				});
-				
-			}
-		});	
+	$(".touch-div").tap(function(){
+		location.href="/bonus";
 	});
-	$(".share-btn").tap(function(){
-		$("#sharebox").velocity("fadeIn");
+	$(".line").tap(function(){
+		location.href="/bonus";
 	});
-}
+};
 
 },{"../../bower_components/velocity/velocity.js":3,"../../bower_components/zepto/zepto.js":4,"../../bower_components/zeptojs/src/touch.js":5,"./share.js":2}],2:[function(require,module,exports){
 $(function(){
@@ -83,7 +47,7 @@ $(function(){
 				wx.onMenuShareTimeline({
 					title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
 					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
 					success: function(){
 						$("#sharebox").velocity("fadeOut");
 						$(".edit-body").velocity("fadeOut");
@@ -93,7 +57,7 @@ $(function(){
 					title:'和妈妈一起美丽下厨',
 					desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
 					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
 					success:function(){
 						$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");
@@ -112,7 +76,7 @@ $(function(){
 								wx.onMenuShareTimeline({
 									title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
 									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
 									success:function(){
 										$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");
@@ -123,7 +87,7 @@ $(function(){
 									title:'和妈妈一起美丽下厨',
 									desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
 									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'http://beauty.limijiaoyin.com/static/image/share-center.png',
+									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
 									success:function(){
 											$("#sharebox").velocity("fadeOut");	
 						$(".edit-body").velocity("fadeOut");
@@ -5744,6 +5708,33 @@ window.$ === undefined && (window.$ = Zepto)
                 touchTimeout = setTimeout(function(){
                   touchTimeout = null
                   if (touch.el) touch.el.trigger('singleTap')
+                  touch = {}
+                }, 250)
+              }
+            }, 0)
+          } else {
+            touch = {}
+          }
+          deltaX = deltaY = 0
+
+      })
+      // when the browser window loses focus,
+      // for example when a modal dialog is shown,
+      // cancel all ongoing events
+      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
+
+    // scrolling the window indicates intention of the user
+    // to scroll, not tap or swipe, so cancel all ongoing events
+    $(window).on('scroll', cancelAll)
+  })
+
+  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
+    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
+    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
+  })
+})(Zepto)
+
+},{}]},{},[1])                  if (touch.el) touch.el.trigger('singleTap')
                   touch = {}
                 }, 250)
               }

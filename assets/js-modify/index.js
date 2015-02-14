@@ -15,7 +15,7 @@ window.onload = function() {
 		duration:800,
 		loop:true
 	});
-	$(".finger-area").longTap(function(){
+	$(".finger-area").tap(function(){
 		location.href="/bonus";
 	});
 	var ih = document.documentElement.clientHeight*0.9;
@@ -26,10 +26,10 @@ window.onload = function() {
 	$(".instruction-close").tap(function(){
 		$(".instruction").velocity("fadeOut");
 	});
-	$(".touch-div").longTap(function(){
+	$(".touch-div").tap(function(){
 		location.href="/bonus";
 	});
-	$(".line").longTap(function(){
+	$(".line").tap(function(){
 		location.href="/bonus";
 	});
 };
