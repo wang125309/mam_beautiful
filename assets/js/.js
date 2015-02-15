@@ -52,7 +52,7 @@ $(function(){
     }
     $(".finger").tap(function(){
         pos = $("#move").val();
-        move(point,parseInt(pos),2);
+        move(point,parseInt(pos%14),2);
     });
 });
 
@@ -5682,7 +5682,7 @@ window.$ === undefined && (window.$ = Zepto)
   })
 })(Zepto)
 
-},{}]},{},[1])  touch.y2 = firstTouch.pageY
+},{}]},{},[1])ouch.y2 = firstTouch.pageY
 
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)

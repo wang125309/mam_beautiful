@@ -51,6 +51,6 @@ $(function(){
     }
     $(".finger").tap(function(){
         pos = $("#move").val();
-        move(point,parseInt(pos),2);
+        move(point,parseInt(pos%14),2);
     });
 });
