@@ -57,10 +57,10 @@ def sign(js_ticket,url):
 		"timestamp":timestamp
 	}
 def base_access_token(appid,secret):
-	access_token = get_access_token(appid,secret)
-	js_ticket = get_js_ticket(access_token,appid,secret)
-	sign(js_ticket,"http://beauty.limijiaoyin.com/index")
-	return {
+    access_token = get_access_token(appid,secret)
+    js_ticket = get_js_ticket(access_token,appid,secret)
+    sign(js_ticket,"http://www.360youtu.com/nabob/index/")
+    return {
 			"access_token":access_token,
 			"js_ticket":js_ticket
 	}

@@ -1,62 +1,138 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('../../bower_components/zepto/zepto.js');
+require('./share.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
 
+window.onload = function() {
+	var coner_width = $(".coner").width();
+	var text_height = $(".bouns-center").height();
+
+	$(".coner").css({
+		"width":2*(coner_width-text_height) + text_height + "px",
+		"height":2*(coner_width-text_height) + text_height + "px",
+		"margin-top":"-"+(coner_width-text_height) + "px"
+	});
+	bigger = 5;
+	$(".coner").velocity({
+		"height":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
+		"width":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
+		"margin-left":-bigger + "px",
+		"margin-top":-(coner_width-text_height)-bigger + "px"
+	},{
+		"during":150,
+		"loop":true
+	});
+	$(".help-mom").tap(function(){
+		$(".edit-body").velocity("fadeIn");
+	});
+	$(".again-mom").tap(function(){
+		location.href = "http://slide.limijiaoyin.com/slides/mama#p0";
+	});
+	$(".right-btn").tap(function(){
+		$("#sharebox").velocity("fadeIn");
+	});
+	$("#submit").tap(function(){
+		$.post("/edit/",{
+			"name":$("#name").val(),
+			"phone":$("#phone").val(),
+			"province":$("#province").val(),
+			"city":$("#city").val(),
+			"area":$("#area").val(),
+			"address":$("#address").val()
+		},function(data){
+			if(data.status == 'phone error')	{
+				//phone error
+				$(".alert").text("手机号格式有误");
+				setTimeout(function(){
+					$(".alert").text("");
+				},1000);
+			}
+			else if(data.status == 'empty error') {
+				//empty
+				$(".alert").text("请填全信息哦");
+				setTimeout(function(){
+					$(".alert").text("");
+				},1000);
+			}
+			else if(data.status == 'correct')	{
+				//success
+				$(".edit-body").velocity("fadeOut",function(){
+
+					$("#submit-success").velocity("fadeIn");
+
+				});
+				
+			}
+		});	
+	});
+	$(".share-btn").tap(function(){
+		$("#sharebox").velocity("fadeIn");
+	});
+}
+
+},{"../../bower_components/velocity/velocity.js":3,"../../bower_components/zepto/zepto.js":4,"../../bower_components/zeptojs/src/touch.js":5,"./share.js":2}],2:[function(require,module,exports){
 $(function(){
-    map_width = $(".map").width();
-    map_height = $(".map").height();
-    console.log(map_width+" "+map_height);
-    point = new Array();
-    point[0] = [0.855,0.89,"go"]; 
-    point[1] = [0.523,0.671,"bag_100"];
-    point[2] = [0.285,0.752,"bag_20"];
-    point[3] = [0.040,0.663,"bag_0"];
-    point[4] = [0.122,0.438,"apple"];
-    point[5] = [0.010,0.158,"iphone6"];
-    point[6] = [0.133,0.169,"bag_20"];
-    point[7] = [0.095,0.016,"bag_100"];
-    point[8] = [0.308,-0.039,"bag_20"];
-    point[9] = [0.477,0.074,"bag_0"];
-    point[10] = [0.737,0.033,"bag_200"];
-    point[11] = [0.662,0.152,"apple"];
-    point[12] = [0.846,0.282,"bag_20"];
-    point[13] = [0.799,0.442,"bag_100"];
-    point[14] = [0.870,0.615,"bag_20"];
-    for(i=0;i<15;i++){
-        $("<div id='p_"+i+"'><img style='width:"+map_width*0.1325+"px' src='/static/image/"+point[i][2]+".png'/></div>").insertAfter($(".map"));
-        $("#p_"+i).css({
-            "position":"absolute",
-            "left":"5%",
-            "margin-left":point[i][0]*map_width+"px",
-            "top":point[i][1]*map_height+"px"
+    $.post("/nabob/wxconfig/",{
+		"url":location.href
+	},
+	function(data){
+		wx.config(data);
+        $.get("/nabob/openid/",function(openid){
+            $.get("/nabob/bonus_or_not/",function(d){
+                link = "http://www.360youtu.com/nabob/index/";
+                if(d.status == 'true') {
+                    link += ("?openid="+openid.openid);
+                }
+		        wx.ready(function(){
+			        wx.onMenuShareTimeline({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        success: function(){
+				         
+                        },
+			        });
+			        wx.onMenuShareAppMessage({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        desc:"这个发给同学，TA会感激你",
+				        success:function(){
+                        },
+			        });
+                });
+            });
         });
-    }
-    pos = $("#move").val();
-    $(".roo").css({
-        "margin-left":point[pos][0]*map_width+"px",
-        "top":(point[pos][1]-0.19)*map_height+"px"
-    });
-    var move = function(point,now,num) {
-        if(num == 0) {
-            return ;
-        }
-        $(".roo").velocity({
-            "margin-left":point[now+1][0]*map_height+"px",
-            "top":(point[now+1][1]-0.19)*map_height + "px"
-        },1500,function(){
-            $("#move").val(now+1);
-            move(point,now+1,num-1);
-        });
-        
-    }
-    $(".finger").tap(function(){
-        pos = $("#move").val();
-        move(point,parseInt(pos%14),2);
-    });
+		wx.error(function(res){
+			$.get("/nabob/update_access_token/",function(data){
+				$.post("/wxconfig/",{
+					"url":location.href
+				},function(data){
+					wx.config(data);
+					wx.ready(function(){
+						wx.onMenuShareTimeline({
+							success:function(){
+
+							},
+					    });
+						wx.onMenuShareAppMessage({
+							success:function(){
+
+							},
+						});
+							
+					});
+				});
+			});
+		});
+
+	});
+
+
 });
 
-},{"../../bower_components/velocity/velocity.js":2,"../../bower_components/zepto/zepto.js":3,"../../bower_components/zeptojs/src/touch.js":4}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*! VelocityJS.org (1.2.1). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
 
 /*************************
@@ -3925,7 +4001,7 @@ return function (global, window, document, undefined) {
 /* The CSS spec mandates that the translateX/Y/Z transforms are %-relative to the element itself -- not its parent.
 Velocity, however, doesn't make this distinction. Thus, converting to or from the % unit with these subproperties
 will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /* Zepto v1.1.6 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
@@ -5515,7 +5591,7 @@ window.$ === undefined && (window.$ = Zepto)
 })(Zepto)
 ;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 //     Zepto.js
 //     (c) 2010-2014 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
@@ -5682,7 +5758,252 @@ window.$ === undefined && (window.$ = Zepto)
   })
 })(Zepto)
 
-},{}]},{},[1])ouch.y2 = firstTouch.pageY
+},{}]},{},[1])ull)
+    return xhr
+  }
+
+  // handle optional data/success arguments
+  function parseArguments(url, data, success, dataType) {
+    if ($.isFunction(data)) dataType = success, success = data, data = undefined
+    if (!$.isFunction(success)) dataType = success, success = undefined
+    return {
+      url: url
+    , data: data
+    , success: success
+    , dataType: dataType
+    }
+  }
+
+  $.get = function(/* url, data, success, dataType */){
+    return $.ajax(parseArguments.apply(null, arguments))
+  }
+
+  $.post = function(/* url, data, success, dataType */){
+    var options = parseArguments.apply(null, arguments)
+    options.type = 'POST'
+    return $.ajax(options)
+  }
+
+  $.getJSON = function(/* url, data, success */){
+    var options = parseArguments.apply(null, arguments)
+    options.dataType = 'json'
+    return $.ajax(options)
+  }
+
+  $.fn.load = function(url, data, success){
+    if (!this.length) return this
+    var self = this, parts = url.split(/\s/), selector,
+        options = parseArguments(url, data, success),
+        callback = options.success
+    if (parts.length > 1) options.url = parts[0], selector = parts[1]
+    options.success = function(response){
+      self.html(selector ?
+        $('<div>').html(response.replace(rscript, "")).find(selector)
+        : response)
+      callback && callback.apply(self, arguments)
+    }
+    $.ajax(options)
+    return this
+  }
+
+  var escape = encodeURIComponent
+
+  function serialize(params, obj, traditional, scope){
+    var type, array = $.isArray(obj), hash = $.isPlainObject(obj)
+    $.each(obj, function(key, value) {
+      type = $.type(value)
+      if (scope) key = traditional ? scope :
+        scope + '[' + (hash || type == 'object' || type == 'array' ? key : '') + ']'
+      // handle data in serializeArray() format
+      if (!scope && array) params.add(value.name, value.value)
+      // recurse into nested objects
+      else if (type == "array" || (!traditional && type == "object"))
+        serialize(params, value, traditional, key)
+      else params.add(key, value)
+    })
+  }
+
+  $.param = function(obj, traditional){
+    var params = []
+    params.add = function(key, value) {
+      if ($.isFunction(value)) value = value()
+      if (value == null) value = ""
+      this.push(escape(key) + '=' + escape(value))
+    }
+    serialize(params, obj, traditional)
+    return params.join('&').replace(/%20/g, '+')
+  }
+})(Zepto)
+
+;(function($){
+  $.fn.serializeArray = function() {
+    var name, type, result = [],
+      add = function(value) {
+        if (value.forEach) return value.forEach(add)
+        result.push({ name: name, value: value })
+      }
+    if (this[0]) $.each(this[0].elements, function(_, field){
+      type = field.type, name = field.name
+      if (name && field.nodeName.toLowerCase() != 'fieldset' &&
+        !field.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
+        ((type != 'radio' && type != 'checkbox') || field.checked))
+          add($(field).val())
+    })
+    return result
+  }
+
+  $.fn.serialize = function(){
+    var result = []
+    this.serializeArray().forEach(function(elm){
+      result.push(encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value))
+    })
+    return result.join('&')
+  }
+
+  $.fn.submit = function(callback) {
+    if (0 in arguments) this.bind('submit', callback)
+    else if (this.length) {
+      var event = $.Event('submit')
+      this.eq(0).trigger(event)
+      if (!event.isDefaultPrevented()) this.get(0).submit()
+    }
+    return this
+  }
+
+})(Zepto)
+
+;(function($){
+  // __proto__ doesn't exist on IE<11, so redefine
+  // the Z function to use object extension instead
+  if (!('__proto__' in {})) {
+    $.extend($.zepto, {
+      Z: function(dom, selector){
+        dom = dom || []
+        $.extend(dom, $.fn)
+        dom.selector = selector || ''
+        dom.__Z = true
+        return dom
+      },
+      // this is a kludge but works
+      isZ: function(object){
+        return $.type(object) === 'array' && '__Z' in object
+      }
+    })
+  }
+
+  // getComputedStyle shouldn't freak out when called
+  // without a valid element as argument
+  try {
+    getComputedStyle(undefined)
+  } catch(e) {
+    var nativeGetComputedStyle = getComputedStyle;
+    window.getComputedStyle = function(element){
+      try {
+        return nativeGetComputedStyle(element)
+      } catch(e) {
+        return null
+      }
+    }
+  }
+})(Zepto)
+;
+
+},{}],5:[function(require,module,exports){
+//     Zepto.js
+//     (c) 2010-2014 Thomas Fuchs
+//     Zepto.js may be freely distributed under the MIT license.
+
+;(function($){
+  var touch = {},
+    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
+    longTapDelay = 750,
+    gesture
+
+  function swipeDirection(x1, x2, y1, y2) {
+    return Math.abs(x1 - x2) >=
+      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+  }
+
+  function longTap() {
+    longTapTimeout = null
+    if (touch.last) {
+      touch.el.trigger('longTap')
+      touch = {}
+    }
+  }
+
+  function cancelLongTap() {
+    if (longTapTimeout) clearTimeout(longTapTimeout)
+    longTapTimeout = null
+  }
+
+  function cancelAll() {
+    if (touchTimeout) clearTimeout(touchTimeout)
+    if (tapTimeout) clearTimeout(tapTimeout)
+    if (swipeTimeout) clearTimeout(swipeTimeout)
+    if (longTapTimeout) clearTimeout(longTapTimeout)
+    touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
+    touch = {}
+  }
+
+  function isPrimaryTouch(event){
+    return (event.pointerType == 'touch' ||
+      event.pointerType == event.MSPOINTER_TYPE_TOUCH)
+      && event.isPrimary
+  }
+
+  function isPointerEventType(e, type){
+    return (e.type == 'pointer'+type ||
+      e.type.toLowerCase() == 'mspointer'+type)
+  }
+
+  $(document).ready(function(){
+    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
+
+    if ('MSGesture' in window) {
+      gesture = new MSGesture()
+      gesture.target = document.body
+    }
+
+    $(document)
+      .bind('MSGestureEnd', function(e){
+        var swipeDirectionFromVelocity =
+          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+        if (swipeDirectionFromVelocity) {
+          touch.el.trigger('swipe')
+          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
+        }
+      })
+      .on('touchstart MSPointerDown pointerdown', function(e){
+        if((_isPointerType = isPointerEventType(e, 'down')) &&
+          !isPrimaryTouch(e)) return
+        firstTouch = _isPointerType ? e : e.touches[0]
+        if (e.touches && e.touches.length === 1 && touch.x2) {
+          // Clear out touch movement data if we have it sticking around
+          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
+          touch.x2 = undefined
+          touch.y2 = undefined
+        }
+        now = Date.now()
+        delta = now - (touch.last || now)
+        touch.el = $('tagName' in firstTouch.target ?
+          firstTouch.target : firstTouch.target.parentNode)
+        touchTimeout && clearTimeout(touchTimeout)
+        touch.x1 = firstTouch.pageX
+        touch.y1 = firstTouch.pageY
+        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
+        touch.last = now
+        longTapTimeout = setTimeout(longTap, longTapDelay)
+        // adds the current touch contact for IE gesture recognition
+        if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
+      })
+      .on('touchmove MSPointerMove pointermove', function(e){
+        if((_isPointerType = isPointerEventType(e, 'move')) &&
+          !isPrimaryTouch(e)) return
+        firstTouch = _isPointerType ? e : e.touches[0]
+        cancelLongTap()
+        touch.x2 = firstTouch.pageX
+        touch.y2 = firstTouch.pageY
 
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)

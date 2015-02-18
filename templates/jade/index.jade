@@ -1,26 +1,96 @@
 include ./lib/header.jade
 link(href="{{ STATIC_URL }}css/index.css",rel="stylesheet",type="text/css")
 body
-    input#move(type="hidden",value="0")
+    div#tip(data-mode="{{ mod }}")
+        img(src="{{ STATIC_URL }}image/{% if mod == 'help' %}help-tip.png{% else %}zero-tip.png{% endif %}")
+    input#move(type="hidden",value="{{ pos }}")
     section.title
         div.logo
             img#logo(src="{{ STATIC_URL }}image/logo.png")
+            ul(class="cal {% if mod == 'help' %}unabled{% endif %}")
+                li
+                    span 你已累计了
+                    span.money-count 0
+                    span 压岁钱！
+                li
+                    span 已有 
+                    span.friend-count 0
+                    span 位好友为你助力！
+                li
+                    span 目前能量值排名第
+                    span.power-rank 0
+                    span 位！
     section.middle
-
         div.finger
             img.finger-center(src="{{ STATIC_URL }}image/finger_center.png")
-        img.roo(src="{{ STATIC_URL }}image/roo.gif")
+        div.zw
+            img.zw-img(src="{{ STATIC_URL }}image/zw1.png")
+        div.zw-outer
+            img.zwout(src="{{ STATIC_URL }}image/zwout.png")
+        div.zw-div
+            span=""
+        div.cover=""
+        div.long-tap
+            img.text(src="{{ STATIC_URL }}image/long_tap.png")
+        img.roo(src="{{ STATIC_URL }}image/roo.png")
         img.map(src="{{ STATIC_URL }}image/map.png")
     section.footer
         div.btn-bar
+            div(class="num {% if mod == 'help' %}unable{% endif %}")
+                div.text-first 您今天还有
+                div.clearfix
+                    div.n 0
+                    div.n.num-left 0
+                    div.n-side 次
+                div.text-bottom 参与机会
             div.btn-line
-                a#join(href="javascript:;")
-                    img(src="{{ STATIC_URL }}image/I_want_join.png")
+                a#join(href="javascript:;",class="{% if mod == 'help' %}join{% else %}invite{% endif %}")
+                    img(src="{{ STATIC_URL }}image/{% if mod == 'help' %}I_want_join.png{% else %}invite_to_help.png{% endif %}")
             div.btn-line
                 a#instruction
-                    img(src="{{ STATIC_URL }}image/instruction.png")
+                    img(src="{{ STATIC_URL }}image/instruction-btn.png")
                 div.message=""
+    div.instruction-field
+        img#close(src="{{ STATIC_URL }}image/close.png")
+        img#instruct(src="{{ STATIC_URL }}image/instruction.png")
+    div.prize
+        div.text
+            span#text=""
+        div.apple
+            img#apple(src="{{ STATIC_URL }}image/apple.png")
+        div.bag
+            img#bag(src="{{ STATIC_URL }}image/bag.png")
+    div#share-background
+        img.share(src="{{ STATIC_URL }}image/share.png")
+    div#message
+        img.background(src="{{ STATIC_URL }}image/p_background.png")
+        div(class="message-form {% if mod == 'self' %}{% if has_phone == 'false' %}unabled{% endif %}{% endif %}")
+            div.line
+                a.click-nophone-get(href="javascript:;")
+                    img(src="{{ STATIC_URL }}image/click-get.png")
                 
+        div(class="message-form-disable {% if mod == 'self' %}{% if has_phone == 'false' %}abled{% endif %}{% endif %}")
+            div.line
+                input.phone(placeholder="输入手机号")
+            div.line
+                div.left
+                    input.vcode(placeholder="输入验证码")
+                div.right
+                    img(src="{{ STATIC_URL }}image/get.png",class="getcode")
+            div.line
+                a.click-get(href="javascript:;")
+                    img(src="{{ STATIC_URL }}image/click-get.png")
+    div#help-success
+        img(src="{{ STATIC_URL }}image/help-prize.png")
+        a#ijoin(href="javascript:;")
+            img(src="{{ STATIC_URL }}/image/ijoin.png")
+    div#get-success-area
+        div#get-success
+            img.get-logo(src="{{ STATIC_URL }}image/get-success-logo.png")
+            a.show-me-ticket(href="javascript:;")
+                img(src="{{ STATIC_URL }}image/show-my-ticket.png")
+            a.continue-game(href="javascript:;")
+                img(src="{{ STATIC_URL }}image/continue-game.png")
 script(language="javascript",src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js")
 script(language="javascript",src="{{ STATIC_URL }}js/index.min.js")
 

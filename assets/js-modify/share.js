@@ -1,71 +1,59 @@
 $(function(){
-	$.post("/wxconfig/",{
+    $.post("/nabob/wxconfig/",{
 		"url":location.href
 	},
 	function(data){
 		wx.config(data);
-		wx.ready(function(){
-			$.get("/click/",function(data){
-				wx.onMenuShareTimeline({
-					title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
-					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-					success: function(){
-						$("#sharebox").velocity("fadeOut");
-						$(".edit-body").velocity("fadeOut");
-					},
-				});
-				wx.onMenuShareAppMessage({
-					title:'和妈妈一起美丽下厨',
-					desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
-					link:'http://slide.limijiaoyin.com/slides/mama#p0',
-					imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-					success:function(){
-						$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
+        $.get("/nabob/openid/",function(openid){
+            $.get("/nabob/bonus_or_not/",function(d){
+                link = "http://www.360youtu.com/nabob/index/";
+                if(d.status == 'true') {
+                    link += ("?openid="+openid.openid);
+                }
+		        wx.ready(function(){
+			        wx.onMenuShareTimeline({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        success: function(){
+				         
+                        },
+			        });
+			        wx.onMenuShareAppMessage({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        desc:"这个发给同学，TA会感激你",
+				        success:function(){
+                        },
+			        });
+                });
+            });
+        });
+		wx.error(function(res){
+			$.get("/nabob/update_access_token/",function(data){
+				$.post("/wxconfig/",{
+					"url":location.href
+				},function(data){
+					wx.config(data);
+					wx.ready(function(){
+						wx.onMenuShareTimeline({
+							success:function(){
 
-					},
-				});
-			});
-			wx.error(function(res){
-				$.get("/update_access_token/",function(data){
-					$.post("/wxconfig/",{
-						"url":location.href
-						},function(data){
-							wx.config(data);
-							wx.ready(function(){
-							$.get("/click/",function(data){
-								wx.onMenuShareTimeline({
-									title:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”的参与者,我为妈妈赢取六月鲜新年礼包',
-									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-									success:function(){
-										$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
+							},
+					    });
+						wx.onMenuShareAppMessage({
+							success:function(){
 
-									},
-								});
-								wx.onMenuShareAppMessage({
-									title:'和妈妈一起美丽下厨',
-									desc:'我是第'+data.num+'位加入“和妈妈⼀起美丽下厨”⾏动的参与者,我为妈妈赢取六月鲜新年礼包',
-									link:'http://slide.limijiaoyin.com/slides/mama#p0',
-									imgUrl:'https://mmbiz.qlogo.cn/mmbiz/dlicpJRTtH14ogKDC0hbXyjNibtqsYmxA0CdRfibzsMj0AbACLg6hia858sUJ3gkMSuxJQkKl62gDS7SwlHj7nKVEg/0',
-									success:function(){
-											$("#sharebox").velocity("fadeOut");	
-						$(".edit-body").velocity("fadeOut");
-
-									},
-								});
-							
-							});	
+							},
 						});
+							
 					});
 				});
 			});
-
 		});
 
-
 	});
-});
 
+
+});
