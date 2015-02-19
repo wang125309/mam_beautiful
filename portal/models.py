@@ -40,6 +40,10 @@ class Help(models.Model):
     toopenid = models.CharField(max_length=256)
     prize = models.CharField(max_length=128)
     dateline = models.CharField(max_length=64)
+    user = models.ForeignKey(User)
+    
+    def __unicode__(self):
+        return self.openid
 class Wx(models.Model):
 	access_token = models.CharField(max_length=256)
 	js_ticket = models.CharField(max_length=256)

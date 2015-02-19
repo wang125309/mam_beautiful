@@ -24,12 +24,17 @@ def index(request):
     #if help other
     mod = "self"
     #and not myself
+    
     try:
         request.GET['openid']
         mod = "help"
-        if request.GET['openid'] == request.session['openid']:
-            mod = 'self'
-        print mod
+        try:
+            request.session['openid']
+            if request.GET['openid'] == request.session['openid']:
+                mod = "self"
+        except Exception,e:
+            print e
+            mod = "help"
     except Exception,e:
         print e
         mod = "self"
@@ -87,10 +92,31 @@ def index(request):
     else:
         u = User.objects.get(openid=request.GET['openid'])
         pos = u.pos
+    #mod = "self"
+    #has_phone = "true"
+    #pos = 5
+    box = Help.objects.filter(toopenid=request.session['openid']).all()
+    for i in box:
+        i.headimgurl = i.user.headimgurl
+        i.nickname = i.user.nickname
+        if i.prize == "ticket20":
+            i.prize = u"帮助你获得了20元，别忘了请TA吃顿饭！"
+        elif i.prize == "ticket100":
+            i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭！"
+        elif i.prize == "apple100":
+            i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭"
+        elif i.prize == "ticket200":
+            i.prize = u"帮助你获得了200元，别忘了请TA吃顿饭"
+        elif i.prize == "ticket0":
+            i.prize = u"运气太屎了,什么都没中，友尽！"
+        else :
+            i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
+    
     return render(request,"index.html",{
         "mod":mod,
         "has_phone":has_phone,
-        "pos":pos
+        "pos":pos,
+        "box":box
     })
 def openid(request):
     return JsonResponse({
@@ -161,12 +187,14 @@ def sendmsg(request):
     try:
         c = Code.objects.filter(openid=request.session['openid']).order_by("-dateline")[0]
         if int(c.dateline) + 100 < int(time.time()):
-            r = requests.get("http://www.360youtu.com/uwp/web/sms/send.jsp?tel="+request.GET['phone'].strip()+"&content="+str(code)+"。用该密码登录爱学贷官网查收压岁券，并及时修改登录密码")
+            r = requests.post("http://121.40.57.243:20000/sale_t/newyear/sms",{"telphone":request.GET['phone'].strip(),"yzm":str(code)})
+            print r.json()
             c = Code(openid=request.session['openid'],dateline=str(int(time.time())),code=str(code),phone=request.GET['phone'],used="0")
             c.save()
     except Exception,e:
         print e
-        r = requests.get("http://www.360youtu.com/uwp/web/sms/send.jsp?tel="+request.GET['phone'].strip()+"&content="+str(code)+"。用该密码登录爱学贷官网查收压岁券，并及时修改登录密码")
+        r = requests.post("http://121.40.57.243:20000/sale_t/newyear/sms",{"telphone":request.GET['phone'].strip(),"yzm":str(code)})
+        print r.json()
         try:
             c = Code(openid=request.session['openid'],dateline=str(int(time.time())),code=str(code),phone=request.GET['phone'],used="0")
             c.save()
@@ -193,6 +221,7 @@ def getChance(request):
 def bonus_or_not(request):
     try:
         b = Bonus.objects.get(openid=request.session['openid'])
+        print 'true'
         return JsonResponse({
             "status":"true"
         })
@@ -227,7 +256,8 @@ def commit_prize(request):
                     "status":"help failed",
                 })
             except Exception,e:
-                h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
+                id = User.objects.get(openid=request.session['openid']).id
+                h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"),user_id=id)
                 h.save()
                 b = Bonus.objects.get(openid=request.GET['openid'])
                 b.help_count += 1
@@ -291,7 +321,7 @@ def commit_prize(request):
                     money = total_money
                 elif apple_money:
                     money = apple_money
-                r = requests.post("http://121.40.57.243:20000 /sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
+                r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
                 print r.json()
                 return JsonResponse({
                     "status":"self success",
@@ -320,7 +350,7 @@ def commit_prize(request):
                 money = total_money
             elif apple_money:
                 money = apple_money
-            r = requests.post("http://121.40.57.243:20000 /sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
+            r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
             print r.json()
             return JsonResponse({
                 "status":"self success",
@@ -348,7 +378,9 @@ def checkcode(request):
                         "status":"help failed",
                     })
                 except Exception,e:
-                    h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
+                    id = User.objects.get(openid=request.GET['openid']).id
+                    
+                    h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"),user_id=id)
                     h.save()
                     return JsonResponse({
                         "status":"help success",
@@ -452,7 +484,7 @@ def first_title(request):
                 rank = cnt
                 break
         return JsonResponse({
-            "total":b.total_money,
+            "total":b.total_money+b.apple_money,
             "help_count":b.help_count,
             "rank":rank
         })

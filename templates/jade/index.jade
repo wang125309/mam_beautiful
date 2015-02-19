@@ -1,6 +1,7 @@
 include ./lib/header.jade
 link(href="{{ STATIC_URL }}css/index.css",rel="stylesheet",type="text/css")
 body
+    
     div#tip(data-mode="{{ mod }}")
         img(src="{{ STATIC_URL }}image/{% if mod == 'help' %}help-tip.png{% else %}zero-tip.png{% endif %}")
     input#move(type="hidden",value="{{ pos }}")
@@ -11,7 +12,7 @@ body
                 li
                     span 你已累计了
                     span.money-count 0
-                    span 压岁钱！
+                    span 元压岁钱！
                 li
                     span 已有 
                     span.friend-count 0
@@ -22,18 +23,18 @@ body
                     span 位！
     section.middle
         div.finger
-            img.finger-center(src="{{ STATIC_URL }}image/finger_center.png")
+            img.finger-center(src="{{ STATIC_URL }}image/finger_center.png",style="pointer-events:none",alt="")
         div.zw
-            img.zw-img(src="{{ STATIC_URL }}image/zw1.png")
+            img.zw-img(src="{{ STATIC_URL }}image/zw1.png",style="pointer-events:none",alt="")
         div.zw-outer
-            img.zwout(src="{{ STATIC_URL }}image/zwout.png")
+            img.zwout(src="{{ STATIC_URL }}image/zwout.png",style="pointer-events:none",alt="")
         div.zw-div
             span=""
         div.cover=""
         div.long-tap
-            img.text(src="{{ STATIC_URL }}image/long_tap.png")
-        img.roo(src="{{ STATIC_URL }}image/roo.png")
-        img.map(src="{{ STATIC_URL }}image/map.png")
+            img.text(src="{{ STATIC_URL }}image/long_tap.png",style="pointer-events:none",alt="")
+        img.roo(src="{{ STATIC_URL }}image/roo.png",style="pointer-events:none",alt="")
+        img.map(src="{{ STATIC_URL }}image/map.png",style="pointer-events:none",alt="")
     section.footer
         div.btn-bar
             div(class="num {% if mod == 'help' %}unable{% endif %}")
@@ -50,6 +51,13 @@ body
                 a#instruction
                     img(src="{{ STATIC_URL }}image/instruction-btn.png")
                 div.message=""
+        div#bottom-bar(class="{% if not box %}unabled{% endif %}")
+            div {% for i in box %}
+            div.bottom-bar
+                img.header(src="{{i.headimgurl}}") 
+                span.nickname  {{ i.nickname }}
+                span.message-text {{ i.prize }}
+            div {% endfor %}
     div.instruction-field
         img#close(src="{{ STATIC_URL }}image/close.png")
         img#instruct(src="{{ STATIC_URL }}image/instruction.png")

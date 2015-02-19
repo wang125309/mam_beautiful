@@ -46,13 +46,16 @@ window.onload = function(){
     }
     pos = $("#move").val();
     $(".roo").css({
-        "margin-left":point[pos][0]*map_width+"px",
-        "top":(point[pos][1]-0.19)*map_height+"px"
+        "margin-left":(point[pos][0])*map_width+"px",
+        "top":(point[pos][1]-0.09)*map_height+"px"
+        
     });
     $(".join").tap(function(){
         location.href="/nabob/index/?code="+getQueryString("code");
     });
-
+    $(".x a").tap(function(){
+        $("#bottom-bar").css("display","none"); 
+    });
     total_height = $(".title").height() + $(".middle").height();
     $(".footer").css("top",total_height+"px");
     var move = function(point,now,num) {
@@ -73,7 +76,6 @@ window.onload = function(){
         $.get("/nabob/help_or_not/?openid="+getQueryString("openid"),function(data){
             if(data.status == "true") {
                 $("#tip img").attr("src","/nabob/static/image/leifeng.png");
-
             }
         });
     }
@@ -83,7 +85,7 @@ window.onload = function(){
     }
     w = document.documentElement.clientWidth;
     h = w*0.8*33.1/18.7*0.70;
-    $(".message-form").css("top",h+"px");
+    $(".message-form").css("top",h*1.1+"px");
     $(".message-form-disable").css("top",h+"px");
     finger_w = $(".zw-outer").height();
     $.get("/nabob/getChance/",function(data){
@@ -96,13 +98,21 @@ window.onload = function(){
         "left":w/2-finger_w/2 + "px"
     });
     var coverLongTap = function() {
-        
+        $(".cover").velocity({
+                "opacity":"1"
+                },1000,function(){
+                    $(".cover").velocity({
+                        "opacity":"0.8"
+                        },1000);
+                });
         if($("#tip").data("mode") == 'self') {
             $.get("/nabob/num_plus/",function(data){
-            
-                    });
+            });
         }
 
+        $.get("/nabob/getChance/",function(data){
+            $(".num-left").text(data.num);
+        });
         $(".zw-img").css({
             "-webkit-transform":"rotate(720deg) translateZ(0)",
             "-webkit-transition":"all 2s ease-out"
@@ -141,12 +151,17 @@ window.onload = function(){
                 }
                 else if(data.prize == 3) {
                     $("#text").text("100元");
-                    $("#apple").css("display","block");
+                    $("#apple").css("display","initial");
                     $(".background").attr("src","/nabob/static/image/p_background_100apple.png");
                 }
                 else if(data.prize == 4) {
                     $("#apple").css("display","none");
-                    $(".background").attr("src","/nabob/static/image/zero-tip.png");
+                    if($("#tip").data("mode") == 'help'){
+                        $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
+                    }
+                    else if($("#tip").data("mode") == 'self') {
+                        $("#tip img").attr("src","/naobo/static/image/tick0self.png");
+                    }
                 }
                 else if(data.prize == 5) {
                     $("#text").text("200元");
@@ -159,10 +174,9 @@ window.onload = function(){
                     },m*500+2000);
                 }
                 if(data.prize == 4) {
-
-
                     setTimeout(function(){
                         $("#tip").velocity("fadeIn");
+                        $(".zw-div > span").text("");
                     },m*500+2000);
                 }
                 if(getQueryString("openid")) {
@@ -194,22 +208,34 @@ window.onload = function(){
                     }
                     queryUrl ="/nabob/commit_prize/?type="+type+"&num="+num+"&prize="+prize+"&openid="+getQueryString("openid");
                     $.get(queryUrl,function(d){
-                        if(d.status == 'help success') {
+                        
+                            if(d.status == 'help success') {
+                        
                             if(d.prize == 1) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-20.png");
-                            }
-                            else if(d.prize == 2) {
-                                $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
-                            }
-                            else if(d.prize == 3) {
-                                $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
-                            }
-                            else if(d.prize == 5) {
-                                $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
-                            }
                             setTimeout(function(){
                                 $("#help-success").velocity("fadeIn");
                             },m*500+4000);
+                            }
+                            else if(d.prize == 2) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
+                            setTimeout(function(){
+                                $("#help-success").velocity("fadeIn");
+                            },m*500+4000);
+                            }
+                            else if(d.prize == 3) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
+                            setTimeout(function(){
+                                $("#help-success").velocity("fadeIn");
+                            },m*500+4000);
+                            }
+                            else if(d.prize == 5) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
+                            setTimeout(function(){
+                                $("#help-success").velocity("fadeIn");
+                            },m*500+4000);
+                            }
+
                         }
 
                     });
@@ -223,6 +249,7 @@ window.onload = function(){
                 }
             });
         },2000);
+        
     }
     $(".cover").longTap(function(){
         
@@ -259,6 +286,9 @@ window.onload = function(){
     $("#ijoin").tap(function(){
         location.href="/nabob/index/?code="+getQueryString("code");
     });
+    if($("#tip").data("mode") == "self") {
+        $("#tip img").attr("src","/nabob/static/image/tick0self.png");
+    }
     $("#tip img").tap(function(){
         $("#tip").velocity("fadeOut");        
     });
@@ -307,7 +337,34 @@ window.onload = function(){
         }
         $.get("/nabob/checkcode/?phone="+phone+"&vcode="+vcode+"&type="+type+"&num="+num+"&prize="+prize,function(data){
             if(data.status == 'self success') {
+            $.get("/nabob/openid/",function(openid){
+            $.get("/nabob/bonus_or_not/",function(d){
                 $("#get-success-area").velocity("fadeIn");
+                link = "http://www.360youtu.com/nabob/index/";
+                if(d.status == 'true') {
+                    link += ("?openid="+openid.openid);
+                }
+		        wx.ready(function(){
+			        wx.onMenuShareTimeline({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        success: function(){
+				         
+                        },
+			        });
+			        wx.onMenuShareAppMessage({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        desc:"这个发给同学，TA会感激你",
+				        success:function(){
+                        },
+			        });
+                });
+            });
+        });
+
             }
             else if(data.status == 'self failed') {
                 location.href = location.href;
