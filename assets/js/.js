@@ -1,74 +1,436 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('../../bower_components/zepto/zepto.js');
-require('./share.js');
 require('../../bower_components/zeptojs/src/touch.js');
 require('../../bower_components/velocity/velocity.js');
+require('./share.js');
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
 
-window.onload = function() {
-	var coner_width = $(".coner").width();
-	var text_height = $(".bouns-center").height();
+window.onload = function(){
+    $.get("/nabob/first_title/",function(data){
+        $(".money-count").text(data.total);
+        $(".friend-count").text(data.help_count);
+        $(".power-rank").text(data.rank);
+    });
 
-	$(".coner").css({
-		"width":2*(coner_width-text_height) + text_height + "px",
-		"height":2*(coner_width-text_height) + text_height + "px",
-		"margin-top":"-"+(coner_width-text_height) + "px"
-	});
-	bigger = 5;
-	$(".coner").velocity({
-		"height":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
-		"width":(2*(coner_width-text_height) + text_height) + 2*bigger + "px",
-		"margin-left":-bigger + "px",
-		"margin-top":-(coner_width-text_height)-bigger + "px"
-	},{
-		"during":150,
-		"loop":true
-	});
-	$(".help-mom").tap(function(){
-		$(".edit-body").velocity("fadeIn");
-	});
-	$(".again-mom").tap(function(){
-		location.href = "http://slide.limijiaoyin.com/slides/mama#p0";
-	});
-	$(".right-btn").tap(function(){
-		$("#sharebox").velocity("fadeIn");
-	});
-	$("#submit").tap(function(){
-		$.post("/edit/",{
-			"name":$("#name").val(),
-			"phone":$("#phone").val(),
-			"province":$("#province").val(),
-			"city":$("#city").val(),
-			"area":$("#area").val(),
-			"address":$("#address").val()
-		},function(data){
-			if(data.status == 'phone error')	{
-				//phone error
-				$(".alert").text("手机号格式有误");
-				setTimeout(function(){
-					$(".alert").text("");
-				},1000);
-			}
-			else if(data.status == 'empty error') {
-				//empty
-				$(".alert").text("请填全信息哦");
-				setTimeout(function(){
-					$(".alert").text("");
-				},1000);
-			}
-			else if(data.status == 'correct')	{
-				//success
-				$(".edit-body").velocity("fadeOut",function(){
+    map_width = $(".map").width();
+    map_height = $(".map").height();
+    console.log(map_width+" "+map_height);
+    point = new Array();
+    point[0] = [0.855,0.89,"go"]; 
+    point[1] = [0.870,0.615,"bag_20"];
+    point[2] = [0.799,0.442,"bag_100"];
+    point[3] = [0.846,0.282,"bag_20"];
+    point[4] = [0.662,0.152,"apple_100"];
+    point[5] = [0.737,0.033,"bag_200"];
+    point[6] = [0.477,0.074,"bag_0"];
+    point[7] = [0.308,-0.039,"bag_20"];
+    point[8] = [0.095,0.016,"bag_100"];
+    point[9] = [0.133,0.169,"bag_20"];
+    point[10] = [0.010,0.158,"iphone6"];
+    point[11] = [0.122,0.438,"apple_100"];
+    point[12] = [0.040,0.663,"bag_0"];
+    point[13] = [0.285,0.752,"bag_20"];
+    point[14] = [0.523,0.671,"bag_100"];
 
-					$("#submit-success").velocity("fadeIn");
+    for(i=0;i<15;i++){
+        $("<div id='p_"+i+"'><img style='width:"+map_width*0.1325+"px' src='/nabob/static/image/"+point[i][2]+".png'/></div>").insertAfter($(".map"));
+        $("#p_"+i).css({
+            "position":"absolute",
+            "left":"5%",
+            "margin-left":point[i][0]*map_width+"px",
+            "top":point[i][1]*map_height+"px"
+        });
+    }
+    pos = $("#move").val();
+    $(".roo").css({
+        "margin-left":(point[pos][0]-0.06)*map_width+"px",
+        "top":(point[pos][1]-0.1)*map_height+"px"
+        
+    });
 
-				});
-				
-			}
-		});	
-	});
-	$(".share-btn").tap(function(){
-		$("#sharebox").velocity("fadeIn");
-	});
+    $(".join").tap(function(){
+        location.href="/nabob/index/?code="+getQueryString("code");
+    });
+    $(".x a").tap(function(){
+        $("#bottom-bar").css("display","none"); 
+    });
+    total_height = $(".title").height() + $(".middle").height();
+    $(".footer").css("top",total_height+"px");
+   
+
+    var move = function(point,now,num) {
+        if(num == 0) {
+            return ;
+        }
+        $(".roo").attr("src","/nabob/static/image/roo.gif");
+        $(".roo").css("height","74px");
+        document.getElementById("jump").fastSeek(0.5);
+        document.getElementById("jump").play();
+        $(".roo").velocity({
+            "margin-left":(point[now+1][0]-0.06)*map_height+"px",
+            "top":(point[now+1][1]-0.1)*map_height + "px"
+        },2000,function(){
+            $("#move").val((now+1)%14);
+            $(".roo").css("height","61px");
+            $(".roo").attr("src","/nabob/static/image/roo.png");
+            move(point,(now+1)%14,num-1);
+        });
+        
+    }
+    if(getQueryString("openid")) {
+        
+        $.get("/nabob/help_or_not/?openid="+getQueryString("openid"),function(data){
+            if(data.status == "true") {
+                $("#tip img").attr("src","/nabob/static/image/leifeng.png");
+            }
+        });
+    }
+
+    if($("#tip").data("mode") == "help") {
+        $("#tip").velocity("fadeIn");
+    }
+    w = document.documentElement.clientWidth;
+    h = w*0.8*33.1/18.7*0.70;
+    $(".message-form").css("top",h*1.1+"px");
+    $(".message-form-disable").css("top",h+"px");
+    finger_w = $(".zw-outer").height();
+    $.get("/nabob/getChance/",function(data){
+        $(".num-left").text(data.num);
+    });
+    $(".cover").css({
+        "height":finger_w + "px",
+        "width":finger_w + "px",
+        "top":"23%",
+        "left":w/2-finger_w/2 + "px"
+    });
+    var coverLongTap = function() {
+        
+        $(".cover").velocity({
+            "opacity":"1"
+        },1000,function(){
+            $(".cover").velocity({
+                "opacity":"0"
+                },1000);
+            });
+            if($("#tip").data("mode") == 'self') {
+                $.get("/nabob/num_plus/",function(data){
+            });
+        }
+
+        $.get("/nabob/getChance/",function(data){
+            $(".num-left").text(data.num);
+        });
+        $(".zw-img").css({
+            "-webkit-transform":"rotate(720deg) translateZ(0)",
+            "-webkit-transition":"all 2s ease-out"
+        }); 
+        setTimeout(function(){
+            $(".zw-img").css({      
+                "-webkit-transition":"initial",
+                "-webkit-transform":"rotate(0deg)",
+            });  
+            pos = $("#move").val();
+            queryString = getQueryString("openid");
+            url = "/nabob/move/";
+            if(queryString) {
+                url += ("?openid="+queryString);
+            }
+            $.get(url,function(data){
+                p = data.move;
+                if(p > pos) {
+                    m = p - pos;
+                }
+                else {
+                    m = p + 14 -pos;
+                }
+                $(".zw-div span").text(m);
+                move(point,parseInt(pos%14),m);
+                $("#move").attr("data-prize",data.prize);
+                if(data.prize == 1) {
+                    $("#text").text("20元");
+                    $("#apple").css("display","none");
+                    $(".background").attr("src","/nabob/static/image/p_background_20money.png");
+                }
+                else if(data.prize == 2) {
+                    $("#text").text("100元");
+                    $("#apple").css("display","none");
+                    $(".background").attr("src","/nabob/static/image/p_background_100money.png");
+                }
+                else if(data.prize == 3) {
+                    $("#text").text("100元");
+                    $("#apple").css("display","initial");
+                    $(".background").attr("src","/nabob/static/image/p_background_100apple.png");
+                }
+                else if(data.prize == 4) {
+                    $("#apple").css("display","none");
+                    $("#tip img").attr("src","/nabob/static/image/tick0self.png");
+                }
+                else if(data.prize == 5) {
+                    $("#text").text("200元");
+                    $("#apple").css("display","none");
+                    $(".background").attr("src","/nabob/static/image/p_background_200.png");
+                }
+                if(data.prize != 4) {
+                    setTimeout(function(){
+                        document.getElementById("prize-audio").play();
+                        $(".prize").velocity("fadeIn");
+                    },m*2000+2000);
+                }
+                if(getQueryString("openid")) {
+                    
+                    phone = $(".phone").val();
+                    vcode = $(".vcode").val();
+                    prize = $("#move").data("prize");
+                    type = 'ticket';
+                    num = 0;
+                    if(prize == 1) {
+                        type = 'ticket';
+                        num = 20;
+                    }
+                    else if(prize == 2){
+                        type = 'ticket';
+                        num =  100;
+                    }
+                    else if(prize == 3) {
+                        type = 'apple';
+                        num = 100;
+                    }
+                    else if(prize == 4) {
+                        type = 'ticket';
+                        num = 0;
+                    }
+                    else if(prize == 5) {
+                        type = 'ticket';
+                        num = 200;
+                    }
+                    queryUrl ="/nabob/commit_prize/?type="+type+"&num="+num+"&prize="+prize+"&openid="+getQueryString("openid");
+                    $.get(queryUrl,function(d){
+                        
+                            if(d.status == 'help success') {
+                        
+                            if(d.prize == 1) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-20.png");
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
+                            }
+                            else if(d.prize == 2) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
+                            }
+                            else if(d.prize == 3) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
+                            }
+                            else if(d.prize == 4) {
+                                
+                                $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
+                            }
+                            else if(d.prize == 5) {
+                                $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
+
+                            }
+
+                        }
+
+                    });
+                }
+                else {
+                    if(data.prize != 4) {
+                        setTimeout(function(){
+                            $("#message").velocity("fadeIn");
+                        },m*2000+4000);
+                    }
+                    else {
+                    
+                        setTimeout(function(){
+                            $("#tip").velocity("fadeIn");
+                        },m*2000+4000);
+                    }
+                }
+            });
+        },2000);
+        
+    }
+    $(".cover").click(function(){
+        
+        if(getQueryString("openid")) {
+        
+            $.get("/nabob/help_or_not/?openid="+getQueryString("openid"),function(t){
+                if(t.status == "true") {
+                    return;
+                }
+                else if(t.status == "false") {
+                    coverLongTap();
+                }
+            });
+        }
+        else {
+            $.get("/nabob/getChance/",function(t){
+                if(t.num > 0) {
+                    coverLongTap();
+                }
+                else {
+                    return ;
+                }
+            });
+        }
+
+
+    });
+    $(".show-me-ticket").tap(function(){
+        location.href="http://www.aixuedai.com/yasuiquan";
+    });
+    $(".continue-game").tap(function(){
+        location.href="/nabob/index/?code="+getQueryString("code");
+    });
+    $("#ijoin").tap(function(){
+        location.href="/nabob/index/";
+    });
+    if($("#tip").data("mode") == "self") {
+        $("#tip img").attr("src","/nabob/static/image/tick0self.png");
+    }
+    $("#tip img").tap(function(){
+        $("#tip").velocity("fadeOut");        
+    });
+    $("#instruction img").tap(function(){
+        $(".instruction-field").velocity("fadeIn");        
+    });
+    $("#close").tap(function(){
+        $(".instruction-field").velocity("fadeOut");
+    });
+    $(".getcode").tap(function(){
+        phone_number = $(".phone").val();
+        if(phone_number) {
+            $.get("/nabob/sendmsg/?phone="+phone_number,function(data){
+                if(data) {
+                    $(".vcode").attr("placeholder","验证码已发送");
+                }
+            });        
+        }
+    });
+    
+    $(".click-get").tap(function(){
+        phone = $(".phone").val();
+        vcode = $(".vcode").val();
+        prize = $("#move").data("prize");
+        type = 'ticket';
+        num = 0;
+        if(prize == 1) {
+             type = 'ticket';
+             num = 20;
+        }
+        else if(prize == 2){
+             type = 'ticket';
+             num =  100;
+        }
+        else if(prize == 3) {
+             type = 'apple';
+             num = 100;
+        }
+        else if(prize == 4) {
+            type = 'ticket';
+            num = 0;
+        }
+        else if(prize == 5) {
+            type = 'ticket';
+            num = 200;
+        }
+        $.get("/nabob/checkcode/?phone="+phone+"&vcode="+vcode+"&type="+type+"&num="+num+"&prize="+prize,function(data){
+            if(data.status == 'self success') {
+            $.get("/nabob/openid/",function(openid){
+            $.get("/nabob/bonus_or_not/",function(d){
+                $("#get-success-area").velocity("fadeIn");
+                link = "http://www.360youtu.com/nabob/index/";
+                if(d.status == 'true') {
+                    link += ("?openid="+openid.openid);
+                }
+		        wx.ready(function(){
+			        wx.onMenuShareTimeline({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        success: function(){
+				         
+                        },
+			        });
+			        wx.onMenuShareAppMessage({
+                        link:link,
+                        imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
+                        title:"大学生！不！看！后！悔！一大波压岁钱和苹果机来袭……",
+                        desc:"这个发给同学，TA会感激你",
+				        success:function(){
+                        },
+			        });
+                });
+            });
+        });
+
+            }
+            else if(data.status == 'self failed') {
+                location.href = location.href;
+            }
+        });
+
+    });
+
+    $(".click-nophone-get").tap(function(){
+        prize = $("#move").data("prize");
+        type = 'ticket';
+        num = 0;
+        if(prize == 1) {
+             type = 'ticket';
+             num = 20;
+        }
+        else if(prize == 2){
+             type = 'ticket';
+             num =  100;
+        }
+        else if(prize == 3) {
+             type = 'apple';
+             num = 100;
+        }
+        else if(prize == 4) {
+            type = 'ticket';
+            num = 0;
+        }
+        else if(prize == 5) {
+            type = 'ticket';
+            num = 200;
+        }
+        
+        queryUrl ="/nabob/commit_prize/?type="+type+"&num="+num+"&prize="+prize;
+        $.get(queryUrl,function(data){
+            if(data.status == 'self success') {
+                if(data.prize) {
+                    $("#get-success-area").velocity("fadeIn");
+                }
+            }
+
+        });
+    });
+    $(".invite").tap(function(){
+        $("#share-background").velocity("fadeIn");        
+        wx.showOptionMenu();
+    });
+    $("#share-background").tap(function(){
+        $("#share-background").velocity("fadeOut");
+    });
 }
 
 },{"../../bower_components/velocity/velocity.js":3,"../../bower_components/zepto/zepto.js":4,"../../bower_components/zeptojs/src/touch.js":5,"./share.js":2}],2:[function(require,module,exports){
@@ -5388,379 +5750,6 @@ window.$ === undefined && (window.$ = Zepto)
     if (deferred) deferred.promise(xhr)
 
     if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
-    setHeader('Accept', mime || '*/*')
-    if (mime = settings.mimeType || mime) {
-      if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
-      xhr.overrideMimeType && xhr.overrideMimeType(mime)
-    }
-    if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
-      setHeader('Content-Type', settings.contentType || 'application/x-www-form-urlencoded')
-
-    if (settings.headers) for (name in settings.headers) setHeader(name, settings.headers[name])
-    xhr.setRequestHeader = setHeader
-
-    xhr.onreadystatechange = function(){
-      if (xhr.readyState == 4) {
-        xhr.onreadystatechange = empty
-        clearTimeout(abortTimeout)
-        var result, error = false
-        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
-          dataType = dataType || mimeToDataType(settings.mimeType || xhr.getResponseHeader('content-type'))
-          result = xhr.responseText
-
-          try {
-            // http://perfectionkills.com/global-eval-what-are-the-options/
-            if (dataType == 'script')    (1,eval)(result)
-            else if (dataType == 'xml')  result = xhr.responseXML
-            else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
-          } catch (e) { error = e }
-
-          if (error) ajaxError(error, 'parsererror', xhr, settings, deferred)
-          else ajaxSuccess(result, xhr, settings, deferred)
-        } else {
-          ajaxError(xhr.statusText || null, xhr.status ? 'error' : 'abort', xhr, settings, deferred)
-        }
-      }
-    }
-
-    if (ajaxBeforeSend(xhr, settings) === false) {
-      xhr.abort()
-      ajaxError(null, 'abort', xhr, settings, deferred)
-      return xhr
-    }
-
-    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
-
-    var async = 'async' in settings ? settings.async : true
-    xhr.open(settings.type, settings.url, async, settings.username, settings.password)
-
-    for (name in headers) nativeSetHeader.apply(xhr, headers[name])
-
-    if (settings.timeout > 0) abortTimeout = setTimeout(function(){
-        xhr.onreadystatechange = empty
-        xhr.abort()
-        ajaxError(null, 'timeout', xhr, settings, deferred)
-      }, settings.timeout)
-
-    // avoid sending empty string (#319)
-    xhr.send(settings.data ? settings.data : null)
-    return xhr
-  }
-
-  // handle optional data/success arguments
-  function parseArguments(url, data, success, dataType) {
-    if ($.isFunction(data)) dataType = success, success = data, data = undefined
-    if (!$.isFunction(success)) dataType = success, success = undefined
-    return {
-      url: url
-    , data: data
-    , success: success
-    , dataType: dataType
-    }
-  }
-
-  $.get = function(/* url, data, success, dataType */){
-    return $.ajax(parseArguments.apply(null, arguments))
-  }
-
-  $.post = function(/* url, data, success, dataType */){
-    var options = parseArguments.apply(null, arguments)
-    options.type = 'POST'
-    return $.ajax(options)
-  }
-
-  $.getJSON = function(/* url, data, success */){
-    var options = parseArguments.apply(null, arguments)
-    options.dataType = 'json'
-    return $.ajax(options)
-  }
-
-  $.fn.load = function(url, data, success){
-    if (!this.length) return this
-    var self = this, parts = url.split(/\s/), selector,
-        options = parseArguments(url, data, success),
-        callback = options.success
-    if (parts.length > 1) options.url = parts[0], selector = parts[1]
-    options.success = function(response){
-      self.html(selector ?
-        $('<div>').html(response.replace(rscript, "")).find(selector)
-        : response)
-      callback && callback.apply(self, arguments)
-    }
-    $.ajax(options)
-    return this
-  }
-
-  var escape = encodeURIComponent
-
-  function serialize(params, obj, traditional, scope){
-    var type, array = $.isArray(obj), hash = $.isPlainObject(obj)
-    $.each(obj, function(key, value) {
-      type = $.type(value)
-      if (scope) key = traditional ? scope :
-        scope + '[' + (hash || type == 'object' || type == 'array' ? key : '') + ']'
-      // handle data in serializeArray() format
-      if (!scope && array) params.add(value.name, value.value)
-      // recurse into nested objects
-      else if (type == "array" || (!traditional && type == "object"))
-        serialize(params, value, traditional, key)
-      else params.add(key, value)
-    })
-  }
-
-  $.param = function(obj, traditional){
-    var params = []
-    params.add = function(key, value) {
-      if ($.isFunction(value)) value = value()
-      if (value == null) value = ""
-      this.push(escape(key) + '=' + escape(value))
-    }
-    serialize(params, obj, traditional)
-    return params.join('&').replace(/%20/g, '+')
-  }
-})(Zepto)
-
-;(function($){
-  $.fn.serializeArray = function() {
-    var name, type, result = [],
-      add = function(value) {
-        if (value.forEach) return value.forEach(add)
-        result.push({ name: name, value: value })
-      }
-    if (this[0]) $.each(this[0].elements, function(_, field){
-      type = field.type, name = field.name
-      if (name && field.nodeName.toLowerCase() != 'fieldset' &&
-        !field.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
-        ((type != 'radio' && type != 'checkbox') || field.checked))
-          add($(field).val())
-    })
-    return result
-  }
-
-  $.fn.serialize = function(){
-    var result = []
-    this.serializeArray().forEach(function(elm){
-      result.push(encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value))
-    })
-    return result.join('&')
-  }
-
-  $.fn.submit = function(callback) {
-    if (0 in arguments) this.bind('submit', callback)
-    else if (this.length) {
-      var event = $.Event('submit')
-      this.eq(0).trigger(event)
-      if (!event.isDefaultPrevented()) this.get(0).submit()
-    }
-    return this
-  }
-
-})(Zepto)
-
-;(function($){
-  // __proto__ doesn't exist on IE<11, so redefine
-  // the Z function to use object extension instead
-  if (!('__proto__' in {})) {
-    $.extend($.zepto, {
-      Z: function(dom, selector){
-        dom = dom || []
-        $.extend(dom, $.fn)
-        dom.selector = selector || ''
-        dom.__Z = true
-        return dom
-      },
-      // this is a kludge but works
-      isZ: function(object){
-        return $.type(object) === 'array' && '__Z' in object
-      }
-    })
-  }
-
-  // getComputedStyle shouldn't freak out when called
-  // without a valid element as argument
-  try {
-    getComputedStyle(undefined)
-  } catch(e) {
-    var nativeGetComputedStyle = getComputedStyle;
-    window.getComputedStyle = function(element){
-      try {
-        return nativeGetComputedStyle(element)
-      } catch(e) {
-        return null
-      }
-    }
-  }
-})(Zepto)
-;
-
-},{}],5:[function(require,module,exports){
-//     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
-//     Zepto.js may be freely distributed under the MIT license.
-
-;(function($){
-  var touch = {},
-    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
-    longTapDelay = 750,
-    gesture
-
-  function swipeDirection(x1, x2, y1, y2) {
-    return Math.abs(x1 - x2) >=
-      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
-  }
-
-  function longTap() {
-    longTapTimeout = null
-    if (touch.last) {
-      touch.el.trigger('longTap')
-      touch = {}
-    }
-  }
-
-  function cancelLongTap() {
-    if (longTapTimeout) clearTimeout(longTapTimeout)
-    longTapTimeout = null
-  }
-
-  function cancelAll() {
-    if (touchTimeout) clearTimeout(touchTimeout)
-    if (tapTimeout) clearTimeout(tapTimeout)
-    if (swipeTimeout) clearTimeout(swipeTimeout)
-    if (longTapTimeout) clearTimeout(longTapTimeout)
-    touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
-    touch = {}
-  }
-
-  function isPrimaryTouch(event){
-    return (event.pointerType == 'touch' ||
-      event.pointerType == event.MSPOINTER_TYPE_TOUCH)
-      && event.isPrimary
-  }
-
-  function isPointerEventType(e, type){
-    return (e.type == 'pointer'+type ||
-      e.type.toLowerCase() == 'mspointer'+type)
-  }
-
-  $(document).ready(function(){
-    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
-
-    if ('MSGesture' in window) {
-      gesture = new MSGesture()
-      gesture.target = document.body
-    }
-
-    $(document)
-      .bind('MSGestureEnd', function(e){
-        var swipeDirectionFromVelocity =
-          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
-        if (swipeDirectionFromVelocity) {
-          touch.el.trigger('swipe')
-          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
-        }
-      })
-      .on('touchstart MSPointerDown pointerdown', function(e){
-        if((_isPointerType = isPointerEventType(e, 'down')) &&
-          !isPrimaryTouch(e)) return
-        firstTouch = _isPointerType ? e : e.touches[0]
-        if (e.touches && e.touches.length === 1 && touch.x2) {
-          // Clear out touch movement data if we have it sticking around
-          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
-          touch.x2 = undefined
-          touch.y2 = undefined
-        }
-        now = Date.now()
-        delta = now - (touch.last || now)
-        touch.el = $('tagName' in firstTouch.target ?
-          firstTouch.target : firstTouch.target.parentNode)
-        touchTimeout && clearTimeout(touchTimeout)
-        touch.x1 = firstTouch.pageX
-        touch.y1 = firstTouch.pageY
-        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
-        touch.last = now
-        longTapTimeout = setTimeout(longTap, longTapDelay)
-        // adds the current touch contact for IE gesture recognition
-        if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
-      })
-      .on('touchmove MSPointerMove pointermove', function(e){
-        if((_isPointerType = isPointerEventType(e, 'move')) &&
-          !isPrimaryTouch(e)) return
-        firstTouch = _isPointerType ? e : e.touches[0]
-        cancelLongTap()
-        touch.x2 = firstTouch.pageX
-        touch.y2 = firstTouch.pageY
-
-        deltaX += Math.abs(touch.x1 - touch.x2)
-        deltaY += Math.abs(touch.y1 - touch.y2)
-      })
-      .on('touchend MSPointerUp pointerup', function(e){
-        if((_isPointerType = isPointerEventType(e, 'up')) &&
-          !isPrimaryTouch(e)) return
-        cancelLongTap()
-
-        // swipe
-        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
-
-          swipeTimeout = setTimeout(function() {
-            touch.el.trigger('swipe')
-            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
-            touch = {}
-          }, 0)
-
-        // normal tap
-        else if ('last' in touch)
-          // don't fire tap when delta position changed by more than 30 pixels,
-          // for instance when moving to a point and back to origin
-          if (deltaX < 30 && deltaY < 30) {
-            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
-            // ('tap' fires before 'scroll')
-            tapTimeout = setTimeout(function() {
-
-              // trigger universal 'tap' with the option to cancelTouch()
-              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-              var event = $.Event('tap')
-              event.cancelTouch = cancelAll
-              touch.el.trigger(event)
-
-              // trigger double tap immediately
-              if (touch.isDoubleTap) {
-                if (touch.el) touch.el.trigger('doubleTap')
-                touch = {}
-              }
-
-              // trigger single tap after 250ms of inactivity
-              else {
-                touchTimeout = setTimeout(function(){
-                  touchTimeout = null
-                  if (touch.el) touch.el.trigger('singleTap')
-                  touch = {}
-                }, 250)
-              }
-            }, 0)
-          } else {
-            touch = {}
-          }
-          deltaX = deltaY = 0
-
-      })
-      // when the browser window loses focus,
-      // for example when a modal dialog is shown,
-      // cancel all ongoing events
-      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
-
-    // scrolling the window indicates intention of the user
-    // to scroll, not tap or swipe, so cancel all ongoing events
-    $(window).on('scroll', cancelAll)
-  })
-
-  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
-    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
-    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
-  })
-})(Zepto)
-
-},{}]},{},[1])settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
     setHeader('Accept', mime || '*/*')
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]

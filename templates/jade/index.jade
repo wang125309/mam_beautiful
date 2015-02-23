@@ -1,7 +1,10 @@
 include ./lib/header.jade
 link(href="{{ STATIC_URL }}css/index.css",rel="stylesheet",type="text/css")
 body
-    
+    audio#prize-audio
+        source(src="{{ STATIC_URL }}audio/prize.mp3",type="audio/mpeg")
+    audio#jump
+        source(src="{{ STATIC_URL }}audio/jump.mp3",type="audio/mpeg")
     div#tip(data-mode="{{ mod }}")
         img(src="{{ STATIC_URL }}image/{% if mod == 'help' %}help-tip.png{% else %}zero-tip.png{% endif %}")
     input#move(type="hidden",value="{{ pos }}")

@@ -46,10 +46,11 @@ window.onload = function(){
     }
     pos = $("#move").val();
     $(".roo").css({
-        "margin-left":(point[pos][0])*map_width+"px",
-        "top":(point[pos][1]-0.09)*map_height+"px"
+        "margin-left":(point[pos][0]-0.06)*map_width+"px",
+        "top":(point[pos][1]-0.1)*map_height+"px"
         
     });
+
     $(".join").tap(function(){
         location.href="/nabob/index/?code="+getQueryString("code");
     });
@@ -58,15 +59,23 @@ window.onload = function(){
     });
     total_height = $(".title").height() + $(".middle").height();
     $(".footer").css("top",total_height+"px");
+   
+
     var move = function(point,now,num) {
         if(num == 0) {
             return ;
         }
+        $(".roo").attr("src","/nabob/static/image/roo.gif");
+        $(".roo").css("height","74px");
+        document.getElementById("jump").fastSeek(0.5);
+        document.getElementById("jump").play();
         $(".roo").velocity({
-            "margin-left":point[now+1][0]*map_height+"px",
-            "top":(point[now+1][1]-0.19)*map_height + "px"
-        },500,function(){
+            "margin-left":(point[now+1][0]-0.06)*map_height+"px",
+            "top":(point[now+1][1]-0.1)*map_height + "px"
+        },2000,function(){
             $("#move").val((now+1)%14);
+            $(".roo").css("height","61px");
+            $(".roo").attr("src","/nabob/static/image/roo.png");
             move(point,(now+1)%14,num-1);
         });
         
@@ -98,15 +107,16 @@ window.onload = function(){
         "left":w/2-finger_w/2 + "px"
     });
     var coverLongTap = function() {
+        
         $(".cover").velocity({
-                "opacity":"1"
-                },1000,function(){
-                    $(".cover").velocity({
-                        "opacity":"0.8"
-                        },1000);
-                });
-        if($("#tip").data("mode") == 'self') {
-            $.get("/nabob/num_plus/",function(data){
+            "opacity":"1"
+        },1000,function(){
+            $(".cover").velocity({
+                "opacity":"0"
+                },1000);
+            });
+            if($("#tip").data("mode") == 'self') {
+                $.get("/nabob/num_plus/",function(data){
             });
         }
 
@@ -165,8 +175,9 @@ window.onload = function(){
                 }
                 if(data.prize != 4) {
                     setTimeout(function(){
+                        document.getElementById("prize-audio").play();
                         $(".prize").velocity("fadeIn");
-                    },m*500+2000);
+                    },m*2000+2000);
                 }
                 if(getQueryString("openid")) {
                     
@@ -202,21 +213,24 @@ window.onload = function(){
                         
                             if(d.prize == 1) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-20.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
                             }
                             else if(d.prize == 2) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
                             }
                             else if(d.prize == 3) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
                             }
                             else if(d.prize == 4) {
                                 
@@ -224,9 +238,11 @@ window.onload = function(){
                             }
                             else if(d.prize == 5) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                    document.getElementById("prize-audio").play();
+                                },m*2000+4000);
+
                             }
 
                         }
@@ -237,20 +253,20 @@ window.onload = function(){
                     if(data.prize != 4) {
                         setTimeout(function(){
                             $("#message").velocity("fadeIn");
-                        },m*500+4000);
+                        },m*2000+4000);
                     }
                     else {
                     
                         setTimeout(function(){
                             $("#tip").velocity("fadeIn");
-                        },m*500+4000);
+                        },m*2000+4000);
                     }
                 }
             });
         },2000);
         
     }
-    $(".cover").longTap(function(){
+    $(".cover").click(function(){
         
         if(getQueryString("openid")) {
         
