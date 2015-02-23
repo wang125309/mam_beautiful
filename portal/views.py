@@ -24,7 +24,6 @@ def index(request):
     #if help other
     mod = "self"
     #and not myself
-    
     try:
         request.GET['openid']
         mod = "help"
@@ -34,10 +33,8 @@ def index(request):
                 mod = "self"
         except Exception,e:
             print e
-            mod = "help"
     except Exception,e:
         print e
-        mod = "self"
     if mod == "self":
         try:
             request.GET['code']
@@ -60,21 +57,37 @@ def index(request):
                 u.dateline = datetime.datetime.now().strftime("%Y-%m-%d") 
                 u.save()
             except Exception,e:
-                u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],pos=0,code=request.session['code'],times=0,dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
+                print e
+                u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
                 u.save()
     elif mod == "help":
         try:
             request.GET['code']
             p = wx_login(appid,secret,request.GET['code'])
-            request.session['openid'] = p['openid']
-            request.session['headimgurl'] = p['headimgurl'].encode("utf8")
-            request.session['nickname'] = p['nickname'].encode("utf8")
-            request.session['code'] = request.GET['code']
             try:
                 request.session['openid']
             except Exception,e:
+                request.session['openid'] = p['openid']
+                request.session['headimgurl'] = p['headimgurl'].encode("utf8")
+                request.session['nickname'] = p['nickname'].encode("utf8")
+                request.session['code'] = request.GET['code']
+                try:
+                    u = User.objects.get(openid=request.session['openid'])
+                    u.openid = request.session['openid']
+                    u.headimgurl = request.session['headimgurl']
+                    u.nickname = request.session['nickname']
+                    u.code = request.session['code']
+                    u.dateline = datetime.datetime.now().strftime("%Y-%m-%d") 
+                    u.save()
+                except Exception,e:
+                    print e
+                    u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
+                    u.save()
+                    #u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
+                #u.save()
                 return HttpResponseRedirect("/nabob/login/?openid="+request.GET['openid'])
         except Exception,e :
+            print e
             return HttpResponseRedirect("/nabob/login/?openid="+request.GET['openid'])
     has_phone = "true"
     try:
@@ -86,32 +99,36 @@ def index(request):
     except Exception,e:
         has_phone = "false"
     pos = 0
+    print mod
     if mod == 'self':
         u = User.objects.get(openid=request.session['openid'])
         pos = u.pos
+
     else:
         u = User.objects.get(openid=request.GET['openid'])
         pos = u.pos
     #mod = "self"
     #has_phone = "true"
     #pos = 5
-    box = Help.objects.filter(toopenid=request.session['openid']).all()
-    for i in box:
-        i.headimgurl = i.user.headimgurl
-        i.nickname = i.user.nickname
-        if i.prize == "ticket20":
-            i.prize = u"帮助你获得了20元，别忘了请TA吃顿饭！"
-        elif i.prize == "ticket100":
-            i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭！"
-        elif i.prize == "apple100":
-            i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭"
-        elif i.prize == "ticket200":
-            i.prize = u"帮助你获得了200元，别忘了请TA吃顿饭"
-        elif i.prize == "ticket0":
-            i.prize = u"运气太屎了,什么都没中，友尽！"
-        else :
-            i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
-    
+    box = Help.objects.filter(toopenid=request.session['openid']).order_by("-id")[0:50]
+    try:
+        for i in box:
+            i.headimgurl = i.user.headimgurl
+            i.nickname = i.user.nickname
+            if i.prize == "ticket20":
+                i.prize = u"帮助你获得了20元，别忘了请TA吃顿饭！"
+            elif i.prize == "ticket100":
+                i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭！"
+            elif i.prize == "apple100":
+                i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭"
+            elif i.prize == "ticket200":
+                i.prize = u"帮助你获得了200元，别忘了请TA吃顿饭"
+            elif i.prize == "ticket0":
+                i.prize = u"运气太屎了,什么都没中，友尽！"
+            else :
+                i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
+    except Exception,e:
+        print e
     return render(request,"index.html",{
         "mod":mod,
         "has_phone":has_phone,
@@ -131,19 +148,19 @@ def move(request):
     l200 = [5]
     ran = random.randint(0,100)
     prize = 1
-    if ran < 45:
+    if ran < 50:
         prize = 1
         r = random.randint(0,4)
         pos = l20[r]
-    elif ran >= 45 and ran < 65:
+    elif ran >= 50 and ran < 55:
         prize = 2
         r = random.randint(0,2)
         pos = l100[r]
-    elif ran >= 65 and ran < 85:
+    elif ran >= 55 and ran < 60:
         prize = 3
         r = random.randint(0,1)
         pos = lapp100[r]
-    elif ran >= 85 and ran < 95:
+    elif ran >= 60 and ran < 99:
         prize = 4
         r = random.randint(0,1)
         pos = l0[r]
@@ -209,9 +226,13 @@ def getChance(request):
         if str(u.dateline) != str(datetime.datetime.now().strftime("%Y-%m-%d")):
             u.times = 0
             u.dateline = datetime.datetime.now().strftime("%Y-%m-%d")
+        chance = 3-u.times
+        if chance < 0:
+            chance = 0
+            u.times = 3
         u.save()
         return JsonResponse({
-            "num":3-u.times
+            "num":chance
         })
     except Exception,e:
         print e
@@ -285,6 +306,7 @@ def commit_prize(request):
                     money = apple_money
                 r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
                 print r.json()
+                
                 return JsonResponse({
                     "status":"help success",
                     "prize":request.GET['prize']
@@ -483,8 +505,18 @@ def first_title(request):
             if i.openid == request.session['openid']:
                 rank = cnt
                 break
+        h = Help.objects.filter(toopenid=request.session['openid'])
+        h_total = 0
+        for i in h:
+            if i.prize == 'ticket20':
+                h_total += 20
+            elif i.prize == 'ticket100':
+                h_total += 100
+            elif i.prize == 'apple100':
+                h_total += 100
+
         return JsonResponse({
-            "total":b.total_money+b.apple_money,
+            "total":h_total+b.total_money+b.apple_money,
             "help_count":b.help_count,
             "rank":rank
         })
@@ -496,12 +528,18 @@ def first_title(request):
             "rank":0
         })
 def rank(request):
-    b = Bonus.objects.order_by("-help_count")[0:100]
+    b = Bonus.objects.order_by("-help_count")[0:150]
     prize = []
-
+    count = 0
     for i in b:
-        a = {"openid":i.openid,"phone":i.phone,"power":i.help_count,"headimgurl":i.user.headimgurl,"nickname":i.user.nickname}
-        prize.append(a) 
+        try:
+            a = {"openid":i.openid,"phone":i.phone,"power":i.help_count,"headimgurl":i.user.headimgurl,"nickname":i.user.nickname}
+            prize.append(a)
+            count += 1
+        except Exception,e:
+            print e
+        if count == 100:
+            break
     return JsonResponse({
         "status":"success",
         "rank":prize

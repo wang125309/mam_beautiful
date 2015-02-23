@@ -4,6 +4,7 @@ $(function(){
 	},
 	function(data){
 		wx.config(data);
+
         $.get("/nabob/openid/",function(openid){
             $.get("/nabob/bonus_or_not/",function(d){
                 link = "http://www.360youtu.com/nabob/index/";
@@ -11,6 +12,7 @@ $(function(){
                     link += ("?openid="+openid.openid);
                 }
 		        wx.ready(function(){
+                    wx.hideOptionMenu();
 			        wx.onMenuShareTimeline({
                         link:link,
                         imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",

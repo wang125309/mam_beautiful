@@ -78,6 +78,7 @@ $(function(){
 	},
 	function(data){
 		wx.config(data);
+
         $.get("/nabob/openid/",function(openid){
             $.get("/nabob/bonus_or_not/",function(d){
                 link = "http://www.360youtu.com/nabob/index/";
@@ -85,6 +86,7 @@ $(function(){
                     link += ("?openid="+openid.openid);
                 }
 		        wx.ready(function(){
+                    wx.hideOptionMenu();
 			        wx.onMenuShareTimeline({
                         link:link,
                         imgUrl:"http://www.360youtu.com/nabob/static/image/share.jpg",
@@ -5758,11 +5760,7 @@ window.$ === undefined && (window.$ = Zepto)
   })
 })(Zepto)
 
-},{}]},{},[1]) abortTimeout
-
-    if (deferred) deferred.promise(xhr)
-
-    if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
+},{}]},{},[1])settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
     setHeader('Accept', mime || '*/*')
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]

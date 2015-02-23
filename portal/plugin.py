@@ -11,8 +11,8 @@ def wx_login(appid,secret,code):
 	
 	r = requests.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secret+"&code="+code+"&grant_type=authorization_code")
 	access_res = r.json()
-	r = requests.get("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appid+"&grant_type=refresh_token&refresh_token="+access_res['refresh_token'])
-	access_res = r.json()
+	#r = requests.get("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appid+"&grant_type=refresh_token&refresh_token="+access_res['refresh_token'])
+	#access_res = r.json()
 	r = requests.get("https://api.weixin.qq.com/sns/userinfo?access_token="+access_res['access_token']+"&openid="+access_res['openid']+"&lang=zh_CN")
 	r.encoding = 'utf8'
 	return r.json()

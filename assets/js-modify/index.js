@@ -156,12 +156,7 @@ window.onload = function(){
                 }
                 else if(data.prize == 4) {
                     $("#apple").css("display","none");
-                    if($("#tip").data("mode") == 'help'){
-                        $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
-                    }
-                    else if($("#tip").data("mode") == 'self') {
-                        $("#tip img").attr("src","/naobo/static/image/tick0self.png");
-                    }
+                    $("#tip img").attr("src","/nabob/static/image/tick0self.png");
                 }
                 else if(data.prize == 5) {
                     $("#text").text("200元");
@@ -171,12 +166,6 @@ window.onload = function(){
                 if(data.prize != 4) {
                     setTimeout(function(){
                         $(".prize").velocity("fadeIn");
-                    },m*500+2000);
-                }
-                if(data.prize == 4) {
-                    setTimeout(function(){
-                        $("#tip").velocity("fadeIn");
-                        $(".zw-div > span").text("");
                     },m*500+2000);
                 }
                 if(getQueryString("openid")) {
@@ -229,6 +218,10 @@ window.onload = function(){
                                 $("#help-success").velocity("fadeIn");
                             },m*500+4000);
                             }
+                            else if(d.prize == 4) {
+                                
+                                $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
+                            }
                             else if(d.prize == 5) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
                             setTimeout(function(){
@@ -244,6 +237,12 @@ window.onload = function(){
                     if(data.prize != 4) {
                         setTimeout(function(){
                             $("#message").velocity("fadeIn");
+                        },m*500+4000);
+                    }
+                    else {
+                    
+                        setTimeout(function(){
+                            $("#tip").velocity("fadeIn");
                         },m*500+4000);
                     }
                 }
@@ -278,13 +277,13 @@ window.onload = function(){
 
     });
     $(".show-me-ticket").tap(function(){
-        location.href="http://www.aixuedai.com";
+        location.href="http://www.aixuedai.com/yasuiquan";
     });
     $(".continue-game").tap(function(){
         location.href="/nabob/index/?code="+getQueryString("code");
     });
     $("#ijoin").tap(function(){
-        location.href="/nabob/index/?code="+getQueryString("code");
+        location.href="/nabob/index/";
     });
     if($("#tip").data("mode") == "self") {
         $("#tip img").attr("src","/nabob/static/image/tick0self.png");
@@ -410,6 +409,7 @@ window.onload = function(){
     });
     $(".invite").tap(function(){
         $("#share-background").velocity("fadeIn");        
+        wx.showOptionMenu();
     });
     $("#share-background").tap(function(){
         $("#share-background").velocity("fadeOut");
