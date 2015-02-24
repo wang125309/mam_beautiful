@@ -69,8 +69,7 @@ window.onload = function(){
         $(".roo").velocity({
             "margin-left":(point[now+1][0]-0.06)*map_height+"px",
             "top":(point[now+1][1]-0.1)*map_height + "px"
-        },2000,function(){
-            $(".roo").attr("src","/nabob/static/image/roo.png");
+        },500,function(){
             move(point,(now+1)%14,num-1);
         });
         
