@@ -65,16 +65,10 @@ window.onload = function(){
         if(num == 0) {
             return ;
         }
-        $(".roo").attr("src","/nabob/static/image/roo.gif");
-        $(".roo").css("height","74px");
-        document.getElementById("jump").fastSeek(0.5);
-        document.getElementById("jump").play();
         $(".roo").velocity({
             "margin-left":(point[now+1][0]-0.06)*map_height+"px",
             "top":(point[now+1][1]-0.1)*map_height + "px"
         },2000,function(){
-            $("#move").val((now+1)%14);
-            $(".roo").css("height","61px");
             $(".roo").attr("src","/nabob/static/image/roo.png");
             move(point,(now+1)%14,num-1);
         });
@@ -177,7 +171,7 @@ window.onload = function(){
                     setTimeout(function(){
                         document.getElementById("prize-audio").play();
                         $(".prize").velocity("fadeIn");
-                    },m*2000+2000);
+                    },m*500+2000);
                 }
                 if(getQueryString("openid")) {
                     
@@ -216,21 +210,21 @@ window.onload = function(){
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
                                     document.getElementById("prize-audio").play();
-                                },m*2000+4000);
+                                },m*500+4000);
                             }
                             else if(d.prize == 2) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
                                     document.getElementById("prize-audio").play();
-                                },m*2000+4000);
+                                },m*500+4000);
                             }
                             else if(d.prize == 3) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
                                     document.getElementById("prize-audio").play();
-                                },m*2000+4000);
+                                },m*500+4000);
                             }
                             else if(d.prize == 4) {
                                 
@@ -241,7 +235,7 @@ window.onload = function(){
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
                                     document.getElementById("prize-audio").play();
-                                },m*2000+4000);
+                                },m*500+4000);
 
                             }
 
@@ -253,13 +247,13 @@ window.onload = function(){
                     if(data.prize != 4) {
                         setTimeout(function(){
                             $("#message").velocity("fadeIn");
-                        },m*2000+4000);
+                        },m*500+4000);
                     }
                     else {
                     
                         setTimeout(function(){
                             $("#tip").velocity("fadeIn");
-                        },m*2000+4000);
+                        },m*500+4000);
                     }
                 }
             });
