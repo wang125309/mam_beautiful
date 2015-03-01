@@ -24,6 +24,10 @@ def index(request):
     #if help other
     mod = "self"
     #and not myself
+    request.session['openid']='sfdsdfdsfdsfdsfsdfds'
+    request.session['headimgurl']='sfsdafdsfasdfsdaf'
+    request.session['nickname']='sfafsd'
+    request.session['code']='sfadsf'
     try:
         request.GET['openid']
         mod = "help"
@@ -33,6 +37,7 @@ def index(request):
                 mod = "self"
         except Exception,e:
             print e
+
     except Exception,e:
         print e
     if mod == "self":
@@ -58,6 +63,7 @@ def index(request):
                 u.save()
             except Exception,e:
                 print e
+                print "idndifni"
                 u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
                 u.save()
     elif mod == "help":
@@ -83,8 +89,6 @@ def index(request):
                     print e
                     u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
                     u.save()
-                    #u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
-                #u.save()
                 return HttpResponseRedirect("/nabob/login/?openid="+request.GET['openid'])
         except Exception,e :
             print e
@@ -129,6 +133,7 @@ def index(request):
                 i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
     except Exception,e:
         print e
+    box = {}
     return render(request,"index.html",{
         "mod":mod,
         "has_phone":has_phone,
@@ -146,8 +151,19 @@ def move(request):
     lapp100 = [4,11]
     l0 = [6,12]
     l200 = [5]
+    liphone=[10]
     ran = random.randint(0,100)
     prize = 1
+    u = User.objects.get(openid=request.session['openid'])
+    
+
+    try:
+        uh_f = UserHistory.objects.get(id=2)
+    except Exception,e:
+        uh = UserHistory(openid=request.session['openid'],user_id=u.id,dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
+        uh.save()
+        print e
+
     if ran < 50:
         prize = 1
         r = random.randint(0,4)
@@ -171,12 +187,17 @@ def move(request):
     try:
         openid = request.GET['openid']
     except Exception,e:
-        print e
         openid = request.session['openid']
-     
+         
     u = User.objects.get(openid=openid)
     u.pos = pos
     u.save()
+    try:
+        if uh.id == 2:
+            pos = 10
+            prize = 6
+    except Exception,e:
+        print "haoyong"
     return JsonResponse({
         "move":pos,
         "prize":prize

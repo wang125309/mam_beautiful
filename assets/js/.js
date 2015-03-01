@@ -63,9 +63,12 @@ window.onload = function(){
    
 
     var move = function(point,now,num) {
+
         if(num == 0) {
             return ;
         }
+
+
         $(".roo").velocity({
             "margin-left":(point[now+1][0]-0.06)*map_height+"px",
             "top":(point[now+1][1]-0.1)*map_height + "px"
@@ -104,10 +107,10 @@ window.onload = function(){
         
         $(".cover").velocity({
             "opacity":"1"
-        },1000,function(){
+        },500,function(){
             $(".cover").velocity({
                 "opacity":"0"
-                },1000);
+                },500);
             });
             if($("#tip").data("mode") == 'self') {
                 $.get("/nabob/num_plus/",function(data){
@@ -142,6 +145,7 @@ window.onload = function(){
                 }
                 $(".zw-div span").text(m);
                 move(point,parseInt(pos%14),m);
+
                 $("#move").attr("data-prize",data.prize);
                 if(data.prize == 1) {
                     $("#text").text("20元");
@@ -167,12 +171,24 @@ window.onload = function(){
                     $("#apple").css("display","none");
                     $(".background").attr("src","/nabob/static/image/p_background_200.png");
                 }
+                else if(data.prize == 6) {
+                    $("#text").text("");
+                    $("#apple").css("width","24%");
+                    $("#apple").attr("src","/nabob/static/image/iphone-big.png");
+                    $(".background").attr("src","/nabob/static/image/p_background_iphone.png");
+                }
+                if(data.prize != 6) {
+                    $("#apple").css("width","56%");
+                    $("#apple").attr("src","/nabob/static/image/apple.png");
+
+                }
                 if(data.prize != 4) {
+
                     setTimeout(function(){
-                        document.getElementById("prize-audio").play();
                         $(".prize").velocity("fadeIn");
                     },m*500+2000);
                 }
+
                 if(getQueryString("openid")) {
                     
                     phone = $(".phone").val();
@@ -209,21 +225,18 @@ window.onload = function(){
                                 $("#help-success > img").attr("src","/nabob/static/image/help-20.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
-                                    document.getElementById("prize-audio").play();
                                 },m*500+4000);
                             }
                             else if(d.prize == 2) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
-                                    document.getElementById("prize-audio").play();
                                 },m*500+4000);
                             }
                             else if(d.prize == 3) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
-                                    document.getElementById("prize-audio").play();
                                 },m*500+4000);
                             }
                             else if(d.prize == 4) {
@@ -234,7 +247,6 @@ window.onload = function(){
                                 $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
                                 setTimeout(function(){
                                     $("#help-success").velocity("fadeIn");
-                                    document.getElementById("prize-audio").play();
                                 },m*500+4000);
 
                             }
@@ -260,7 +272,7 @@ window.onload = function(){
         },2000);
         
     }
-    $(".cover").click(function(){
+    $(".cover").longTap(function(){
         
         if(getQueryString("openid")) {
         

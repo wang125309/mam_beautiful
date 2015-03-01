@@ -47,3 +47,8 @@ class Help(models.Model):
 class Wx(models.Model):
 	access_token = models.CharField(max_length=256)
 	js_ticket = models.CharField(max_length=256)
+class UserHistory(models.Model):
+    openid = models.CharField(max_length=256)
+    user = models.ForeignKey(User)
+    dateline = models.CharField(max_length=256)
+    
