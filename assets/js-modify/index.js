@@ -241,6 +241,9 @@ window.onload = function(){
                             else if(d.prize == 4) {
                                 
                                 $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
+                                setTimeout(function(){
+                                    $("#tip").velocity("fadeIn");
+                                },m*500+4000);
                             }
                             else if(d.prize == 5) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-200.png");

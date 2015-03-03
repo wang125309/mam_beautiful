@@ -24,10 +24,6 @@ def index(request):
     #if help other
     mod = "self"
     #and not myself
-    request.session['openid']='sfdsdfdsfdsfdsfsdfds'
-    request.session['headimgurl']='sfsdafdsfasdfsdaf'
-    request.session['nickname']='sfafsd'
-    request.session['code']='sfadsf'
     try:
         request.GET['openid']
         mod = "help"
@@ -129,11 +125,8 @@ def index(request):
                 i.prize = u"帮助你获得了200元，别忘了请TA吃顿饭"
             elif i.prize == "ticket0":
                 i.prize = u"运气太屎了,什么都没中，友尽！"
-            else :
-                i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
     except Exception,e:
         print e
-    box = {}
     return render(request,"index.html",{
         "mod":mod,
         "has_phone":has_phone,
@@ -156,13 +149,18 @@ def move(request):
     prize = 1
     u = User.objects.get(openid=request.session['openid'])
     
+    if u.phone :
 
-    try:
-        uh_f = UserHistory.objects.get(id=2)
-    except Exception,e:
-        uh = UserHistory(openid=request.session['openid'],user_id=u.id,dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
-        uh.save()
-        print e
+        try:
+            uh_f = UserHistory.objects.get(id=2)
+        except Exception,e:
+            try:
+                request.GET['openid']
+            except Exception,a:
+
+                uh = UserHistory(openid=request.session['openid'],user_id=u.id,dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
+                uh.save()
+            print e
 
     if ran < 50:
         prize = 1
@@ -186,9 +184,10 @@ def move(request):
     openid = request.session['openid']
     try:
         openid = request.GET['openid']
+        
     except Exception,e:
         openid = request.session['openid']
-         
+             
     u = User.objects.get(openid=openid)
     u.pos = pos
     u.save()

@@ -46,10 +46,11 @@ window.onload = function(){
     }
     pos = $("#move").val();
     $(".roo").css({
-        "margin-left":(point[pos][0])*map_width+"px",
-        "top":(point[pos][1]-0.09)*map_height+"px"
+        "margin-left":(point[pos][0]-0.06)*map_width+"px",
+        "top":(point[pos][1]-0.1)*map_height+"px"
         
     });
+
     $(".join").tap(function(){
         location.href="/nabob/index/?code="+getQueryString("code");
     });
@@ -58,15 +59,19 @@ window.onload = function(){
     });
     total_height = $(".title").height() + $(".middle").height();
     $(".footer").css("top",total_height+"px");
+   
+
     var move = function(point,now,num) {
+
         if(num == 0) {
             return ;
         }
+
+
         $(".roo").velocity({
-            "margin-left":point[now+1][0]*map_height+"px",
-            "top":(point[now+1][1]-0.19)*map_height + "px"
+            "margin-left":(point[now+1][0]-0.06)*map_height+"px",
+            "top":(point[now+1][1]-0.1)*map_height + "px"
         },500,function(){
-            $("#move").val((now+1)%14);
             move(point,(now+1)%14,num-1);
         });
         
@@ -98,15 +103,16 @@ window.onload = function(){
         "left":w/2-finger_w/2 + "px"
     });
     var coverLongTap = function() {
+        
         $(".cover").velocity({
-                "opacity":"1"
-                },1000,function(){
-                    $(".cover").velocity({
-                        "opacity":"0.8"
-                        },1000);
-                });
-        if($("#tip").data("mode") == 'self') {
-            $.get("/nabob/num_plus/",function(data){
+            "opacity":"1"
+        },500,function(){
+            $(".cover").velocity({
+                "opacity":"0"
+                },500);
+            });
+            if($("#tip").data("mode") == 'self') {
+                $.get("/nabob/num_plus/",function(data){
             });
         }
 
@@ -138,6 +144,7 @@ window.onload = function(){
                 }
                 $(".zw-div span").text(m);
                 move(point,parseInt(pos%14),m);
+
                 $("#move").attr("data-prize",data.prize);
                 if(data.prize == 1) {
                     $("#text").text("20元");
@@ -163,11 +170,24 @@ window.onload = function(){
                     $("#apple").css("display","none");
                     $(".background").attr("src","/nabob/static/image/p_background_200.png");
                 }
+                else if(data.prize == 6) {
+                    $("#text").text("");
+                    $("#apple").css("width","24%");
+                    $("#apple").attr("src","/nabob/static/image/iphone-big.png");
+                    $(".background").attr("src","/nabob/static/image/p_background_iphone.png");
+                }
+                if(data.prize != 6) {
+                    $("#apple").css("width","56%");
+                    $("#apple").attr("src","/nabob/static/image/apple.png");
+
+                }
                 if(data.prize != 4) {
+
                     setTimeout(function(){
                         $(".prize").velocity("fadeIn");
                     },m*500+2000);
                 }
+
                 if(getQueryString("openid")) {
                     
                     phone = $(".phone").val();
@@ -202,31 +222,35 @@ window.onload = function(){
                         
                             if(d.prize == 1) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-20.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                },m*500+4000);
                             }
                             else if(d.prize == 2) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-100.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                },m*500+4000);
                             }
                             else if(d.prize == 3) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-apple-100.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                },m*500+4000);
                             }
                             else if(d.prize == 4) {
                                 
                                 $("#tip img").attr("src","/nabob/static/image/zero-tip.png");
+                                setTimeout(function(){
+                                    $("#tip").velocity("fadeIn");
+                                },m*500+4000);
                             }
                             else if(d.prize == 5) {
                                 $("#help-success > img").attr("src","/nabob/static/image/help-200.png");
-                            setTimeout(function(){
-                                $("#help-success").velocity("fadeIn");
-                            },m*500+4000);
+                                setTimeout(function(){
+                                    $("#help-success").velocity("fadeIn");
+                                },m*500+4000);
+
                             }
 
                         }
