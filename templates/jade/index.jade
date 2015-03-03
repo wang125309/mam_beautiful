@@ -7,8 +7,6 @@ body
         img(src="{{ STATIC_URL }}image/{% if mod == 'help' %}help-tip.png{% else %}zero-tip.png{% endif %}")
     input#move(type="hidden",value="{{ pos }}")
     section.title
-        div.logo
-            img#logo(src="{{ STATIC_URL }}image/logo.png")
             ul(class="cal {% if mod == 'help' %}unabled{% endif %}")
                 li
                     span 你已累计了
