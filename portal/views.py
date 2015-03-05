@@ -152,7 +152,7 @@ def move(request):
     if u.phone :
 
         try:
-            uh_f = UserHistory.objects.get(id=2)
+            uh_h = UserHistory.objects.get(id=2)
         except Exception,e:
             try:
                 request.GET['openid']
@@ -191,12 +191,12 @@ def move(request):
     u = User.objects.get(openid=openid)
     u.pos = pos
     u.save()
-    try:
-        if uh.id == 2:
-            pos = 10
-            prize = 6
-    except Exception,e:
-        print "haoyong"
+    #try:
+    #    if uh.id == 2:
+    #        pos = 10
+    #        prize = 6
+    #except Exception,e:
+    #    print "haoyong"
     return JsonResponse({
         "move":pos,
         "prize":prize
@@ -517,7 +517,7 @@ def num_plus(request):
 def first_title(request):
     try:
         b = Bonus.objects.get(openid=request.session['openid'])
-        bo = Bonus.objects.order_by("-help_count")
+        bo = Bonus.objects.order_by("-help_count_last")
         cnt = 0
         rank = 0
         for i in bo:
@@ -548,12 +548,12 @@ def first_title(request):
             "rank":0
         })
 def rank(request):
-    b = Bonus.objects.order_by("-help_count")[0:150]
+    b = Bonus.objects.order_by("-help_count_last")[0:150]
     prize = []
     count = 0
     for i in b:
         try:
-            a = {"openid":i.openid,"phone":i.phone,"power":i.help_count,"headimgurl":i.user.headimgurl,"nickname":i.user.nickname}
+            a = {"openid":i.openid,"phone":i.phone,"power":i.help_count_last,"headimgurl":i.user.headimgurl,"nickname":i.user.nickname}
             prize.append(a)
             count += 1
         except Exception,e:

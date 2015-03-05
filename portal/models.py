@@ -32,7 +32,7 @@ class Bonus(models.Model):
     code = models.CharField(max_length=32,null=True)
     help_count = models.IntegerField(null=True)
     user = models.ForeignKey(User)
-    
+    help_count_last = models.IntegerField(null=True)   
     def __unicode__(self):
         return self.openid
 class Help(models.Model):
@@ -51,4 +51,4 @@ class UserHistory(models.Model):
     openid = models.CharField(max_length=256)
     user = models.ForeignKey(User)
     dateline = models.CharField(max_length=256)
-    
+ 
