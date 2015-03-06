@@ -1,13 +1,11 @@
-require('../../bower_components/zepto/zepto.js');
-require('./share.js');
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]); return null;
 }
 var wx_login = function() {
-
-	var call_back_uri = "http%3A%2F%2Fwww.360youtu.com%2Fnabob%2Findex%2F";
+    var address = 'blow_test';
+	var call_back_uri = "http%3A%2F%2Fwww.360youtu.com%2F"+address+"%2Findex%2F";
     if(getQueryString("openid")) {
         call_back_uri += "?openid="+getQueryString("openid");
     }

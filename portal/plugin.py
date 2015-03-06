@@ -1,4 +1,5 @@
 from models import *
+from django.http import JsonResponse,HttpResponseRedirect
 import random
 import json
 import requests
@@ -6,9 +7,9 @@ import logging
 import time
 import hashlib
 logger = logging.getLogger(__name__)
+address = 'blow_test'
 
 def wx_login(appid,secret,code):
-	
 	r = requests.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secret+"&code="+code+"&grant_type=authorization_code")
 	access_res = r.json()
 	#r = requests.get("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+appid+"&grant_type=refresh_token&refresh_token="+access_res['refresh_token'])
@@ -59,37 +60,11 @@ def sign(js_ticket,url):
 def base_access_token(appid,secret):
     access_token = get_access_token(appid,secret)
     js_ticket = get_js_ticket(access_token,appid,secret)
-    sign(js_ticket,"http://www.360youtu.com/nabob/index/")
+    sign(js_ticket,"http://www.360youtu.com/"+address+"/index/")
     return {
 			"access_token":access_token,
 			"js_ticket":js_ticket
-	}
-def bonus_get(openid,nickname):
-	bonus_list = User.objects.all()
-	for i in bonus_list:
-		if i.openid == openid:
-			return "NONE"
-	else:
-		c = Calculate.objects.get(id=1)
-		percent = c.percent
-		first_prize_percent = c.firstpercent
-		
-		ran = random.randint(0,1000)
-		if ran < percent :
-			ran_per = random.randint(0,c.bonusnum)
-			prize = "NONE"
-			if ran_per < first_prize_percent:
-				c.firstpercent = c.firstpercent - 1
-				prize = "first"
-			else:
-				prize = "second"
-			u = User(openid=openid,prize=prize,dateline=time.time(),nickname=nickname)
-			u.save()
-			c.bonusnum = c.bonusnum - 1
-			
-			c.save()
-			return prize
-		else:
-			return "NONE"
-	
-	
+    }
+
+
+

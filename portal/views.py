@@ -8,6 +8,7 @@ from models import *
 from plugin import *
 import datetime
 from sendmsg import *
+from functools import wraps
 import sys
 reload(sys)
 sys.setdefaultencoding('UTF-8')
@@ -17,191 +18,267 @@ logger = logging.getLogger(__name__)
 appid = "wx91e4c1925de9ff50"
 secret = "f2f564ea79ff43f7ed3004821ac3b2b8"
 
-def login(request):
-	return render(request,"login.html")
-
-def index(request):
-    #if help other
-    mod = "self"
-    #and not myself
-    request.session['openid']='sfdsdfdsfdsfdsfsdfds'
-    request.session['headimgurl']='sfsdafdsfasdfsdaf'
-    request.session['nickname']='sfafsd'
-    request.session['code']='sfadsf'
-    try:
-        request.GET['openid']
-        mod = "help"
-        try:
-            request.session['openid']
-            if request.GET['openid'] == request.session['openid']:
-                mod = "self"
-        except Exception,e:
-            print e
-
-    except Exception,e:
-        print e
-    if mod == "self":
-        try:
-            request.GET['code']
-        except Exception,e:
-            return HttpResponseRedirect("/nabob/login/")
-        try:
-            request.session['openid']
-        except Exception,e:
-            p = wx_login(appid,secret,request.GET['code'])
-            request.session['openid'] = p['openid']
-            request.session['headimgurl'] = p['headimgurl'].encode("utf8")
-            request.session['nickname'] = p['nickname'].encode("utf8")
-            request.session['code'] = request.GET['code']
-            try:
-                u = User.objects.get(openid=request.session['openid'])
-                u.openid = request.session['openid']
-                u.headimgurl = request.session['headimgurl']
-                u.nickname = request.session['nickname']
-                u.code = request.session['code']
-                u.dateline = datetime.datetime.now().strftime("%Y-%m-%d") 
-                u.save()
-            except Exception,e:
-                print e
-                print "idndifni"
-                u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
-                u.save()
-    elif mod == "help":
-        try:
-            request.GET['code']
-            p = wx_login(appid,secret,request.GET['code'])
-            try:
-                request.session['openid']
-            except Exception,e:
-                request.session['openid'] = p['openid']
-                request.session['headimgurl'] = p['headimgurl'].encode("utf8")
-                request.session['nickname'] = p['nickname'].encode("utf8")
-                request.session['code'] = request.GET['code']
+def need_login(func):
+    def _need_login(request):
+        if not request.session.get("openid",False):
+            if request.GET.get("code",False):
+                w = wx_login(appid,secret,request.GET['code'])
+                request.session['openid'] = w['openid']
                 try:
                     u = User.objects.get(openid=request.session['openid'])
-                    u.openid = request.session['openid']
-                    u.headimgurl = request.session['headimgurl']
-                    u.nickname = request.session['nickname']
-                    u.code = request.session['code']
-                    u.dateline = datetime.datetime.now().strftime("%Y-%m-%d") 
-                    u.save()
                 except Exception,e:
-                    print e
-                    u = User(openid=request.session['openid'],headimgurl=request.session['headimgurl'],nickname=request.session['nickname'],dateline = str(datetime.datetime.now().strftime("%Y-%m-%d")),times=0,pos=0)
+                    u = User(openid = request.session['openid'],headimgurl=w['headimgurl'].encode("utf8"),nickname=w['nickname'].encode('utf8'),dateline=datetime.datetime.now(),total_height=0)
                     u.save()
-                return HttpResponseRedirect("/nabob/login/?openid="+request.GET['openid'])
-        except Exception,e :
-            print e
-            return HttpResponseRedirect("/nabob/login/?openid="+request.GET['openid'])
-    has_phone = "true"
-    try:
-        b = Bonus.objects.get(openid=request.session['openid'])
-        if b.phone:
-            has_phone = "true"
+                return func(request)
+            else:
+                return JsonResponse({
+                    "status":"fail",
+                    "reason":"need login",
+                    "message":{}
+                })
         else:
-            has_phone = "false"
-    except Exception,e:
-        has_phone = "false"
-    pos = 0
-    print mod
-    if mod == 'self':
-        u = User.objects.get(openid=request.session['openid'])
-        pos = u.pos
-
-    else:
-        u = User.objects.get(openid=request.GET['openid'])
-        pos = u.pos
-    #mod = "self"
-    #has_phone = "true"
-    #pos = 5
-    box = Help.objects.filter(toopenid=request.session['openid']).order_by("-id")[0:50]
-    try:
-        for i in box:
-            i.headimgurl = i.user.headimgurl
-            i.nickname = i.user.nickname
-            if i.prize == "ticket20":
-                i.prize = u"帮助你获得了20元，别忘了请TA吃顿饭！"
-            elif i.prize == "ticket100":
-                i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭！"
-            elif i.prize == "apple100":
-                i.prize = u"帮助你获得了100元，别忘了请TA吃顿饭"
-            elif i.prize == "ticket200":
-                i.prize = u"帮助你获得了200元，别忘了请TA吃顿饭"
-            elif i.prize == "ticket0":
-                i.prize = u"运气太屎了,什么都没中，友尽！"
-            else :
-                i.prize = u"竟然帮你获得了iPhone6,赶紧以身相许吧！"
-    except Exception,e:
-        print e
-    box = {}
-    return render(request,"index.html",{
-        "mod":mod,
-        "has_phone":has_phone,
-        "pos":pos,
-        "box":box
-    })
-def openid(request):
-    return JsonResponse({
-        "openid":request.session['openid']    
-    })
-
-def move(request):
-    l20 = [1,3,7,9,13]
-    l100 = [2,8,14]
-    lapp100 = [4,11]
-    l0 = [6,12]
-    l200 = [5]
-    liphone=[10]
-    ran = random.randint(0,100)
-    prize = 1
-    u = User.objects.get(openid=request.session['openid'])
+            return func(request)
+    return _need_login
     
-
+def login(request):
+	return render(request,"login.html")
+@need_login
+def index(request):
     try:
-        uh_f = UserHistory.objects.get(id=2)
+        u = User.objects.get(openid=request.session['openid'])
+        json = {
+            "status":"success",
+            "reason":"",
+            "message":{
+                "uid":u.id,
+                "openid":request.session['openid'],
+                "total_height":u.total_height,
+                "dateline":u.dateline,
+                "nickname":u.nickname,
+                "headimgurl":u.headimgurl,
+            }
+        }
     except Exception,e:
-        uh = UserHistory(openid=request.session['openid'],user_id=u.id,dateline=datetime.datetime.now().strftime("%Y-%m-%d"))
-        uh.save()
-        print e
-
-    if ran < 50:
-        prize = 1
-        r = random.randint(0,4)
-        pos = l20[r]
-    elif ran >= 50 and ran < 55:
-        prize = 2
-        r = random.randint(0,2)
-        pos = l100[r]
-    elif ran >= 55 and ran < 60:
-        prize = 3
-        r = random.randint(0,1)
-        pos = lapp100[r]
-    elif ran >= 60 and ran < 99:
-        prize = 4
-        r = random.randint(0,1)
-        pos = l0[r]
+        json = {
+            "status":"fail",
+            "reason":"no such user",
+            "message":{},
+        }
+    return JsonResponse(json)
+def add_height(request):
+    try:
+        u = User.objects.get(openid=request.GET['openid'])
+        p = [40,20,20,10,7,3]
+        n = random.randint(0,100)
+        h = 1
+        t5000 = 20
+        t8000 = 10
+        t10000 = 5
+        if n < p[0]:
+            h = random.randint(1,100)
+        elif n < p[0] + p[1] and n >= p[0]:
+            h = random.randint(101,200)
+        elif n < p[0] + p[1] + p[2] and n >= p[0] + p[1]:
+            h = random.randint(201,300)
+        elif n < p[0] + p[1] + p[2] + p[3] and n >= p[0] + p[1] + p[2]:
+            h = random.randint(301,400)
+        elif n < p[0] + p[1] + p[2] + p[3] + p[4] and n >= p[0] + p[1] + p[2] + p[3]:
+            h = random.randint(401,500)
+        else :
+            h = random.randint(501,600)
+        count_5000 = User.objects.filter(total_height__gt=5000).count()
+        if count_5000 >= t5000:
+            #feed
+            if u.total_height >= 5000:
+                #看是不是冲8000,20人
+                count_8000 = User.objects.filter(total_height__gt=8000).count()
+                if count_8000 >= t8000:
+                    if u.total_height >= 8000:
+                        count_10000 = User.objects.filter(total_height__gt=10000).count()
+                        if count_10000 >= t10000:
+                                
+                            if u.total_height >= 10000:
+                                u.total_height += h
+                                u.save()
+                            else:
+                                diff = 9999 - u.total_height
+                                h = random.randint(1,diff/40+1)
+                                if u.total_height + h < 9999:
+                                    u.total_height += h
+                                    u.save()
+                        else:
+                            u.total_height += h
+                            u.save()
+                    else:
+                        diff = 7999 - u.total_height
+                        h = random.randint(1,diff/40+1)
+                        if u.total_height + h < 7999:
+                            u.total_height += h
+                            u.save()
+                else:
+                    #说明不是二等奖种子选手
+                    diff = 9999 - u.total_height
+                    h = random.randint(1,diff/40+1)
+                    if u.total_height + h < 9999:
+                        u.total_height += h
+                        u.save()
+            else:
+                #说明不是种子选手
+                diff = 4999 - u.total_height
+                h = random.randint(1,diff/40+1)
+                #永远吹不破5000
+                if u.total_height + h < 4999:
+                    u.total_height += h
+                    u.save()
+        else:
+            count_8000 = User.objects.filter(total_height__gt=8000).count()
+            if count_8000 >= t8000:
+                if u.total_height >= 8000:
+                    count_10000 = User.objects.filter(total_height__gt=10000).count()
+                    if count_10000 >= t10000:
+                                
+                        if u.total_height >= 10000:
+                            u.total_height += h
+                            u.save()
+                        else:
+                            diff = 9999 - u.total_height
+                            h = random.randint(1,diff/40+1)
+                            if u.total_height + h < 9999:
+                                u.total_height += h
+                                u.save()
+                    else:
+                        u.total_height += h
+                        u.save()
+                else:
+                    #说明不是二等奖种子选手
+                    diff = 7999 - u.total_height
+                    h = random.randint(1,diff/40+1)
+                    if u.total_height + h < 7999:
+                        u.total_height += h
+                        u.save()
+            else:
+                count_10000 = User.objects.filter(total_height__gt=10000).count()
+                if count_10000 >= t10000:
+                    if u.total_height >= 10000:
+                        u.total_height += h
+                        u.save()
+                    else:
+                        diff = 9999 - u.total_height
+                        h = random.randint(1,diff/40+1)
+                        if u.total_height + h < 9999:
+                            u.total_height += h
+                            u.save()
+                else:
+                    u.total_height += h
+                    u.save()
+        help = Help(openid=request.session['openid'],toopenid=request.GET['openid'],dateline=time.time(),height=h)
+        help.save()
+        json = {
+            "status":"success",
+            "reason":"",
+            "message":{
+                "height":h,
+                "total_height":u.total_height
+            }
+        }
+    except Exception,e:
+        json = {
+            "status":"fail",
+            "reason":str(e),
+            "message": {}
+        }
+        return JsonResponse(json)
+@need_login
+def mobile(request):
+    if request.GET.get("mobile",False):
+        if len("mobile") != 11:
+            
+            return JsonReponse({
+                "status":"fail",
+                "reason":"mobile format wrong",
+                "message": {}
+            })
+        else:
+            u = User.objects.get(openid=request.session['openid'])
+            u.mobile = request.GET['mobile']
+            u.save()
+            return JsonResponse({
+                "status":"success",
+                "reason":"",
+                "message":{}
+            })
     else:
-        prize = 5
-        pos = 5
-    openid = request.session['openid']
+        return JsonResponse({
+            "status":"fail",
+            "reason":"no mobile message",
+            "message":{}
+        })
+def rank(request):
+    fetch = 10
+    offset = 5
+    if request.GET.get('fetch',False):
+        fetch = request.GET['fetch']
+    if request.GET.get('offset',False):
+        offset = request.GET['offset']
     try:
-        openid = request.GET['openid']
+        u = User.objects.order_by("-total_height")[offset:offset+fetch]
+        res = []
+        for i in u:
+            a = {"id":i.id,"openid":i.openid,"nickname":i.nickname,"headimgurl":i.headimgurl,"phone":i.phone,"times":i.times,"total_height":i.total_height}
+            res.append(a)
+        return JsonResponse({
+            "status":"success",
+            "reason":"",
+            "message":res
+        })
     except Exception,e:
-        openid = request.session['openid']
-         
-    u = User.objects.get(openid=openid)
-    u.pos = pos
-    u.save()
-    try:
-        if uh.id == 2:
-            pos = 10
-            prize = 6
-    except Exception,e:
-        print "haoyong"
-    return JsonResponse({
-        "move":pos,
-        "prize":prize
-	})
+        return JsonResponse({
+            "status":"fail",
+            "reason":str(e),
+            "message":{}
+        })
+        
+def help_or_not(request):
+    if request.session.get('openid',False) and request.GET.get('openid',False):
+        if request.session['openid'] == request.GET['openid']:
+            return JsonResponse({
+                "status":"success",
+                "reason":"",
+                "message":{
+                    "help":"me"
+                }
+            })
+        else:
+            u = User.objects.get(openid=request.GET['openid'])
+            if not u.mobile:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"no mobile message for help",
+                    "message": {
+                        "help":"me"
+                    }
+                })
+            else:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"",
+                    "message":{
+                        "help":"others"
+                    }
+                })
+    else:
+        if request.session.get('openid',False):
+            return JsonResponse({
+                "status":"fail",
+                "reason":"need login",
+                "message":{}
+            })
+        else:
+            return JsonReponse({
+                "status":"fail",
+                "reason":"can't get openid",
+                "message":{}
+            })
 def wxconfig(request):
 	url = request.POST['url']
 	js_ticket = Wx.objects.get(id=1).js_ticket
@@ -213,355 +290,10 @@ def wxconfig(request):
 		"signature":s['hash'],
 		"jsApiList":['onMenuShareAppMessage','onMenuShareTimeline']
 	}
-	print json
 	return JsonResponse(json)
+@need_login
 def update_access_token(request):
 	get_js_ticket(get_access_token(appid,secret),appid,secret)
 	return JsonResponse({
 		"status":"success"
 	})
-def sendmsg(request):
-    code = random.randint(100000,999999);
-    try:
-        c = Code.objects.filter(openid=request.session['openid']).order_by("-dateline")[0]
-        if int(c.dateline) + 100 < int(time.time()):
-            r = requests.post("http://121.40.57.243:20000/sale_t/newyear/sms",{"telphone":request.GET['phone'].strip(),"yzm":str(code)})
-            print r.json()
-            c = Code(openid=request.session['openid'],dateline=str(int(time.time())),code=str(code),phone=request.GET['phone'],used="0")
-            c.save()
-    except Exception,e:
-        print e
-        r = requests.post("http://121.40.57.243:20000/sale_t/newyear/sms",{"telphone":request.GET['phone'].strip(),"yzm":str(code)})
-        print r.json()
-        try:
-            c = Code(openid=request.session['openid'],dateline=str(int(time.time())),code=str(code),phone=request.GET['phone'],used="0")
-            c.save()
-        except Exception,e:
-            print e
-    return JsonResponse({
-        "status":"success"
-    })
-def getChance(request):
-    try:
-        u = User.objects.get(openid=request.session['openid'])
-        if str(u.dateline) != str(datetime.datetime.now().strftime("%Y-%m-%d")):
-            u.times = 0
-            u.dateline = datetime.datetime.now().strftime("%Y-%m-%d")
-        chance = 3-u.times
-        if chance < 0:
-            chance = 0
-            u.times = 3
-        u.save()
-        return JsonResponse({
-            "num":chance
-        })
-    except Exception,e:
-        print e
-        return JsonResponse({
-            "num":3
-        })
-def bonus_or_not(request):
-    try:
-        b = Bonus.objects.get(openid=request.session['openid'])
-        print 'true'
-        return JsonResponse({
-            "status":"true"
-        })
-    except Exception,e:
-        print e
-        return JsonResponse({
-            "status":"false"    
-        })
-def help_or_not(request):
-    try:
-        h = Help.objects.get(openid=request.session['openid'],toopenid=request.GET['openid'])
-        return JsonResponse({
-            "status":"true"
-            })
-    except Exception,e:
-        print e
-        return JsonResponse({
-            "status":"false"
-            })
-def commit_prize(request):
-    try:
-        #可能为别人领取
-        b = Bonus.objects.get(openid=request.GET['openid'])
-        #检测领没领过
-        #使用GET获取说明是别人
-        #先更新help表
-        #尝试看表里有没有，没有更新，有则无操作
-        if request.session['openid'] != request.GET['openid']:
-            try:
-                h = Help.objects.get(openid=request.session['openid'],toopenid=request.GET['openid'])
-                return JsonResponse({
-                    "status":"help failed",
-                })
-            except Exception,e:
-                id = User.objects.get(openid=request.session['openid']).id
-                h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"),user_id=id)
-                h.save()
-                b = Bonus.objects.get(openid=request.GET['openid'])
-                b.help_count += 1
-                b.save()
-                conpontype = 'axdyasui'
-                if request.GET['type'] == 'ticket':
-                    coupontype = 'axdyasui'
-                elif request.GET['type'] == 'apple':
-                    coupontype = 'appleyasui'
-                elif request.GET['type'] == 'iphone':
-                    coupontype = 'iphone5md'
-                money = 0
-                total_money = 0
-                apple_money = 0
-                iphone = 0
-                if request.GET['type'] == 'ticket': 
-                    total_money = request.GET['num']
-                elif request.GET['type'] == 'apple':
-                    apple_money = request.GET['num']
-                else:
-                    iphone = request.GET['num']
-                if total_money:
-                    money = total_money
-                elif apple_money:
-                    money = apple_money
-                r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
-                print r.json()
-                
-                return JsonResponse({
-                    "status":"help success",
-                    "prize":request.GET['prize']
-                })
-    except Exception,e:
-        print e
-        total_money = 0
-        apple_money = 0
-        iphone = 0
-        if request.GET['type'] == 'ticket': 
-            total_money = request.GET['num']
-        elif request.GET['type'] == 'apple':
-            apple_money = request.GET['num']
-        else:
-            iphone = request.GET['num']
-        try:
-            u = User.objects.get(openid=request.session['openid'])
-            b = Bonus.objects.get(openid=request.session['openid'])
-            if u.times <= 3:    
-                b.total_money += int(total_money)
-                b.apple_money += int(apple_money)
-                b.iphone = iphone
-                b.dateline = datetime.datetime.now().strftime("%Y-%m-%d")
-                b.save()
-                conpontype = 'axdyasui'
-                if request.GET['type'] == 'ticket':
-                    coupontype = 'axdyasui'
-                elif request.GET['type'] == 'apple':
-                    coupontype = 'appleyasui'
-                elif request.GET['type'] == 'iphone':
-                    coupontype = 'iphone5md'
-                money = 0
-                if total_money:
-                    money = total_money
-                elif apple_money:
-                    money = apple_money
-                r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
-                print r.json()
-                return JsonResponse({
-                    "status":"self success",
-                    "prize":request.GET['prize']
-                })
-            else:
-                return JsonResponse({
-                    "status":"self failed",
-                    "prize":request.GET['prize']
-                })
-
-        except Exception,e:
-            print e
-            b = Bonus(openid=request.session['openid'],dateline=datetime.datetime.now().strftime("%Y-%m-%d"),total_money=total_money,apple_money=apple_money,iphone=iphone,times=1)
-            b.save()
-            
-            conpontype = 'axdyasui'
-            if request.GET['type'] == 'ticket':
-                coupontype = 'axdyasui'
-            elif request.GET['type'] == 'apple':
-                coupontype = 'appleyasui'
-            elif request.GET['type'] == 'iphone':
-                coupontype = 'iphone5md'
-            money = 0
-            if total_money:
-                money = total_money
-            elif apple_money:
-                money = apple_money
-            r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":"","regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
-            print r.json()
-            return JsonResponse({
-                "status":"self success",
-                "reason":"insert new message"
-            })
-def checkcode(request):
-    c = Code.objects.filter(openid=request.session['openid']).order_by("-id")[0]
-    if c.code == request.GET['vcode']:
-        c.used = 1
-        c.save()
-        u = User.objects.get(openid=request.session['openid'])
-        u.phone = request.GET['phone']
-        u.save()
-        try:
-            #可能为别人领取
-            b = Bonus.objects.get(openid=request.GET['openid'])
-            #检测领没领过
-            #使用GET获取说明是别人
-            #先更新help表
-            #尝试看表里有没有，没有更新，有则无操作
-            if request.session['openid'] != request.GET['openid']:
-                try:
-                    h = Help.objects.get(openid=request.session['openid'],toopenid=request.GET['openid'])
-                    return JsonResponse({
-                        "status":"help failed",
-                    })
-                except Exception,e:
-                    id = User.objects.get(openid=request.GET['openid']).id
-                    
-                    h = Help(openid=request.session['openid'],toopenid=request.GET['openid'],prize=request.GET['type']+str(request.GET['num']),dateline=datetime.datetime.now().strftime("%Y-%m-%d"),user_id=id)
-                    h.save()
-                    return JsonResponse({
-                        "status":"help success",
-                        "prize":request.GET['prize']
-                    })
-        except Exception,e:
-            print e
-            total_money = 0
-            apple_money = 0
-            iphone = 0
-            if request.GET['type'] == 'ticket': 
-                total_money = request.GET['num']
-            elif request.GET['type'] == 'apple':
-                apple_money = request.GET['num']
-            else:
-                iphone = request.GET['num']
-            try:
-                u = Bonus.objects.get(openid=request.session['openid'])
-                b = Bonus.objects.get(openid=request.session['openid'])
-                if u.times <= 3:    
-                    b.total_money += int(total_money)
-                    b.apple_money += int(apple_money)
-                    b.iphone = iphone
-                    b.dateline = datetime.datetime.now().strftime("%Y-%m-%d")
-                    b.phone = request.GET['phone']
-                    b.save()
-                    conpontype = 'axdyasui'
-                    if request.GET['type'] == 'ticket':
-                        coupontype = 'axdyasui'
-                    elif request.GET['type'] == 'apple':
-                        coupontype = 'appleyasui'
-                    elif request.GET['type'] == 'iphone':
-                        coupontype = 'iphone5md'
-                    money = 0
-                    if total_money:
-                        money = total_money
-                    elif apple_money:
-                        money = apple_money
-                    r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":request.GET['vcode'],"regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
-                    print r.json()
-                    return JsonResponse({
-                        "status":"self success",
-                        "prize":request.GET['prize']
-                    })
-                else:
-                    return JsonResponse({
-                        "status":"self failed",
-                        "prize":request.GET['prize']
-                    })
-
-            except Exception,e:
-                print e
-                b = Bonus(openid=request.session['openid'],phone=request.GET['phone'],dateline=datetime.datetime.now().strftime("%Y-%m-%d"),total_money=total_money,apple_money=apple_money,iphone=iphone,times=1,help_count=0,user_id=u.id)
-                b.save()
-                conpontype = 'axdyasui'
-                if request.GET['type'] == 'ticket':
-                    coupontype = 'axdyasui'
-                elif request.GET['type'] == 'apple':
-                    coupontype = 'appleyasui'
-                elif request.GET['type'] == 'iphone':
-                    coupontype = 'iphone5md'
-                money = 0
-                if total_money:
-                    money = total_money
-                elif apple_money:
-                    money = apple_money
-                r = requests.post("http://121.40.57.243:20000/sale_t/newyear/coupon",{"telphone":str(b.phone),"password":request.GET['vcode'],"regip":"119.29.66.37","money":str(money),"coupontype":coupontype})
-                print r.json()
-                return JsonResponse({
-                    "status":"self success",
-                    "reason":"insert new message"
-                })
-    else:
-        return JsonResponse({
-            "status":"error",
-            "reason":"vcode wrong"
-        })
-
-def num_plus(request):
-    try:
-        u = User.objects.get(openid = request.session['openid'])
-        u.times += 1
-        u.save()
-        print u.times
-        return JsonResponse({
-            "times":u.times
-        })
-    except Exception,e:
-        return JsonResponse({
-            "status":"error"
-        })
-def first_title(request):
-    try:
-        b = Bonus.objects.get(openid=request.session['openid'])
-        bo = Bonus.objects.order_by("-help_count")
-        cnt = 0
-        rank = 0
-        for i in bo:
-            cnt += 1
-            if i.openid == request.session['openid']:
-                rank = cnt
-                break
-        h = Help.objects.filter(toopenid=request.session['openid'])
-        h_total = 0
-        for i in h:
-            if i.prize == 'ticket20':
-                h_total += 20
-            elif i.prize == 'ticket100':
-                h_total += 100
-            elif i.prize == 'apple100':
-                h_total += 100
-
-        return JsonResponse({
-            "total":h_total+b.total_money+b.apple_money,
-            "help_count":b.help_count,
-            "rank":rank
-        })
-    except Exception,e:
-        print e
-        return JsonResponse({
-            "total":0,
-            "help_count":0,
-            "rank":0
-        })
-def rank(request):
-    b = Bonus.objects.order_by("-help_count")[0:150]
-    prize = []
-    count = 0
-    for i in b:
-        try:
-            a = {"openid":i.openid,"phone":i.phone,"power":i.help_count,"headimgurl":i.user.headimgurl,"nickname":i.user.nickname}
-            prize.append(a)
-            count += 1
-        except Exception,e:
-            print e
-        if count == 100:
-            break
-    return JsonResponse({
-        "status":"success",
-        "rank":prize
-    })
