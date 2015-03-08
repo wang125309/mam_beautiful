@@ -16,4 +16,7 @@ class Help(models.Model):
     toopenid = models.CharField(max_length=256)
     dateline = models.CharField(max_length=64)
     height = models.IntegerField()
-    
+    user = models.ForeignKey(User) 
+class Wx(models.Model):
+    access_token = models.CharField(max_length=256)
+    js_ticket = models.CharField(max_length=256)

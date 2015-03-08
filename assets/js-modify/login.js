@@ -6,7 +6,7 @@ function getQueryString(name) {
 }
 var wx_login = function() {
     var address = 'blow_test';
-	var call_back_uri = "http%3A%2F%2Fwww.360youtu.com%2F"+address+"%2Findex%2F";
+	var call_back_uri = "http%3A%2F%2Fwww.360youtu.com%2F"+address+"%2Fpublic%2F";
     if(getQueryString("openid")) {
         call_back_uri += "?openid="+getQueryString("openid");
     }

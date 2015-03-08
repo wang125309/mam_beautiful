@@ -27,21 +27,19 @@ def need_login(func):
                 try:
                     u = User.objects.get(openid=request.session['openid'])
                 except Exception,e:
-                    u = User(openid = request.session['openid'],headimgurl=w['headimgurl'].encode("utf8"),nickname=w['nickname'].encode('utf8'),dateline=datetime.datetime.now(),total_height=0)
+                    u = User(openid = request.session['openid'],headimgurl=w['headimgurl'].encode("utf8"),nickname=w['nickname'].encode('utf8'),dateline=str(time.time()),total_height=0)
                     u.save()
                 return func(request)
             else:
-                return JsonResponse({
-                    "status":"fail",
-                    "reason":"need login",
-                    "message":{}
-                })
+                return HttpResponseRedirect("/blow_test/login/") 
         else:
             return func(request)
     return _need_login
-    
 def login(request):
 	return render(request,"login.html")
+@need_login
+def enter(request):
+    return HttpResponseRedirect("/blow_test/public/")
 @need_login
 def index(request):
     try:
@@ -65,6 +63,62 @@ def index(request):
             "message":{},
         }
     return JsonResponse(json)
+def can_play(request):
+    if request.GET.get('openid',False):
+        
+        try:
+            h = Help.objects.get(toopenid=request.GET['openid'],openid=request.session['openid'])
+            if h:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"",
+                    "message":{
+                        "data":"can't help"
+                    }
+                })
+            else:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"",
+                    "message":{
+                        "data":"can help"
+                    }
+                })
+        except Exception,e:
+            return JsonResponse({
+                "status":"success",
+                "reason":str(e),
+                "message":{
+                    "data":"can help"
+                }
+            })
+    else:
+        try:
+            u = User.objects.get(openid=request.session['openid'])
+            if u.times:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"",
+                    "message":{
+                        "data":"played"
+                    }
+                })
+            else:
+                return JsonResponse({
+                    "status":"success",
+                    "reason":"",
+                    "message":{
+                        "data":"can play"
+                    }
+                })
+        except Exception,e:
+            return JsonResponse({
+                "status":"fail",
+                "reason":str(e),
+                "message":{
+                    "data":"no such user"
+                }
+            })
 def add_height(request):
     try:
         u = User.objects.get(openid=request.GET['openid'])
@@ -171,8 +225,16 @@ def add_height(request):
                 else:
                     u.total_height += h
                     u.save()
-        help = Help(openid=request.session['openid'],toopenid=request.GET['openid'],dateline=time.time(),height=h)
-        help.save()
+        #help = Help(openid=request.session['openid'],toopenid=request.GET['openid'],dateline=time.time(),height=h)
+        #help.save()
+        if request.GET['openid'] == request.session['openid']:
+            u = User.objects.get(openid=request.session['openid'])
+            u.times = 1
+            u.save()
+        else:
+            um = User.objects.get(openid=request.session['openid'])
+            help = Help(openid=request.session['openid'],toopenid=request.GET['openid'],dateline=time.time(),height=h,user_id=um.id)
+            help.save()
         json = {
             "status":"success",
             "reason":"",
@@ -187,20 +249,20 @@ def add_height(request):
             "reason":str(e),
             "message": {}
         }
-        return JsonResponse(json)
+    return JsonResponse(json)
 @need_login
 def mobile(request):
     if request.GET.get("mobile",False):
-        if len("mobile") != 11:
+        if len(request.GET.get("mobile")) != 11:
             
-            return JsonReponse({
+            return JsonResponse({
                 "status":"fail",
                 "reason":"mobile format wrong",
                 "message": {}
             })
         else:
             u = User.objects.get(openid=request.session['openid'])
-            u.mobile = request.GET['mobile']
+            u.phone = request.GET['mobile']
             u.save()
             return JsonResponse({
                 "status":"success",
@@ -215,13 +277,13 @@ def mobile(request):
         })
 def rank(request):
     fetch = 10
-    offset = 5
+    offset = 0
     if request.GET.get('fetch',False):
         fetch = request.GET['fetch']
     if request.GET.get('offset',False):
         offset = request.GET['offset']
     try:
-        u = User.objects.order_by("-total_height")[offset:offset+fetch]
+        u = User.objects.order_by("-total_height")[offset:int(offset)+int(fetch)]
         res = []
         for i in u:
             a = {"id":i.id,"openid":i.openid,"nickname":i.nickname,"headimgurl":i.headimgurl,"phone":i.phone,"times":i.times,"total_height":i.total_height}
@@ -250,7 +312,7 @@ def help_or_not(request):
             })
         else:
             u = User.objects.get(openid=request.GET['openid'])
-            if not u.mobile:
+            if not u.phone:
                 return JsonResponse({
                     "status":"success",
                     "reason":"no mobile message for help",
@@ -291,9 +353,90 @@ def wxconfig(request):
 		"jsApiList":['onMenuShareAppMessage','onMenuShareTimeline']
 	}
 	return JsonResponse(json)
-@need_login
+def get_small_help_big(request):
+    try:
+        h = Help.objects.get(openid=request.GET['openid_small'],toopenid=request.GET['openid_big'])
+        u = User.objects.get(openid=request.GET['openid_big'])
+        return JsonResponse({
+            "status":"success",
+            "reason":"",
+            "message":{
+                "height":h.height,
+                "total_height":u.total_height
+            }
+        })
+    except Exception,e:
+        return JsonResponse({
+            "status":"fail",
+            "reason":str(e),
+            "message":{}
+        })
+def get_help_message(request):
+    try:
+        h = Help.objects.filter(toopenid=request.GET['openid']).order_by("-dateline")[0:2]
+        help = []
+        for i in h:
+            a = {
+                "openid" : i.openid,
+                "nickname": i.user.nickname,
+                "height":i.height
+            }
+            help.append(a)
+        if help:
+            return JsonResponse({
+                "status":"success",
+                "reason":"",
+                "message":{
+                    "help_message":help
+                }
+            })
+        else:
+            return JsonResponse({
+                "status":"fail",
+                "reason":"no one helps",
+                "message":{}
+            })
+    except Exception,e:
+        return JsonResponse({
+            "status":"fail",
+            "reason":str(e),
+            "message":{}
+        })
+def get_height(request):
+    try:
+        u = User.objects.get(openid=request.GET['openid'])
+        
+        return JsonResponse({
+            "status":"success",
+            "reason":"",
+            "message":{
+                "height":u.total_height,
+                "nickname":u.nickname,
+                "openid":u.openid
+            }
+        })
+    except Exception,e:
+        return JsonResponse({
+            "status":"fail",
+            "reason":"no such user",
+            "message":{}
+        })
 def update_access_token(request):
 	get_js_ticket(get_access_token(appid,secret),appid,secret)
 	return JsonResponse({
 		"status":"success"
 	})
+def has_phone(request):
+    u = User.objects.get(openid=request.session['openid'])
+    if u.phone:
+        return JsonResponse({
+            "status":"success",
+            "reason":"",
+            "message":{}
+        })
+    else:
+        return JsonResponse({
+            "status":"fail",
+            "reason":"no phone",
+            "message":{}
+        })
