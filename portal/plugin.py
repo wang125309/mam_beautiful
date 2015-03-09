@@ -7,7 +7,7 @@ import logging
 import time
 import hashlib
 logger = logging.getLogger(__name__)
-address = 'blow_test'
+address = 'blow'
 
 def wx_login(appid,secret,code):
 	r = requests.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secret+"&code="+code+"&grant_type=authorization_code")

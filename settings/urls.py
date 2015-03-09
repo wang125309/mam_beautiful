@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-address = 'blow_test'
+address = 'blow'
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^'+address+'/index/', 'portal.views.index'),

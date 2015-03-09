@@ -31,7 +31,9 @@ def need_login(func):
                     u.save()
                 return func(request)
             else:
-                return HttpResponseRedirect("/blow_test/login/") 
+                if request.GET.get("openid",False):
+                    return HttpResponseRedirect("/blow/login/?openid="+request.GET['openid'])
+                return HttpResponseRedirect("/blow/login/") 
         else:
             return func(request)
     return _need_login
@@ -39,7 +41,9 @@ def login(request):
 	return render(request,"login.html")
 @need_login
 def enter(request):
-    return HttpResponseRedirect("/blow_test/public/")
+    if request.GET.get('openid',False):
+        return HttpResponseRedirect("/blow/public/?openid="+request.GET['openid'])
+    return HttpResponseRedirect("/blow/public/")
 @need_login
 def index(request):
     try:
@@ -54,6 +58,7 @@ def index(request):
                 "dateline":u.dateline,
                 "nickname":u.nickname,
                 "headimgurl":u.headimgurl,
+                "height":u.times
             }
         }
     except Exception,e:
@@ -229,7 +234,7 @@ def add_height(request):
         #help.save()
         if request.GET['openid'] == request.session['openid']:
             u = User.objects.get(openid=request.session['openid'])
-            u.times = 1
+            u.times = h
             u.save()
         else:
             um = User.objects.get(openid=request.session['openid'])
@@ -373,7 +378,7 @@ def get_small_help_big(request):
         })
 def get_help_message(request):
     try:
-        h = Help.objects.filter(toopenid=request.GET['openid']).order_by("-dateline")[0:2]
+        h = Help.objects.filter(toopenid=request.GET['openid']).order_by("-dateline")[0:20]
         help = []
         for i in h:
             a = {

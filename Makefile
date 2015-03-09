@@ -9,7 +9,7 @@ start-uwsgi:
 	$(activate_venv) \
 	&& uwsgi --socket 127.0.0.1:$(port) \
 		  --chdir $(shell pwd) \
-		  --wsgi-file mam_beautiful/wsgi.py \
+		  --wsgi-file settings/wsgi.py \
 		  --master \
 		  --process 4 \
 		  --daemonize $(shell pwd)/logs/uwsgi.log \
