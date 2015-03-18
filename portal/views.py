@@ -48,6 +48,12 @@ def enter(request):
 def index(request):
     try:
         u = User.objects.get(openid=request.session['openid'])
+        prize = 0
+        if u.total_height >= 10000:
+            prize = 1
+        mobile = "0"
+        if u.phone :
+            mobile = u.mobile
         json = {
             "status":"success",
             "reason":"",
@@ -58,7 +64,9 @@ def index(request):
                 "dateline":u.dateline,
                 "nickname":u.nickname,
                 "headimgurl":u.headimgurl,
-                "height":u.times
+                "height":u.times,
+                "prize":prize,
+                "mobile":mobile
             }
         }
     except Exception,e:
@@ -100,7 +108,7 @@ def can_play(request):
     else:
         try:
             u = User.objects.get(openid=request.session['openid'])
-            if u.times:
+            if u.times and u.shared:
                 return JsonResponse({
                     "status":"success",
                     "reason":"",
@@ -124,6 +132,37 @@ def can_play(request):
                     "data":"no such user"
                 }
             })
+def share_complate(request):
+    u = User.objects.get(openid=request.session['openid'])
+    if u.times:
+        u.shared = '1'
+        u.save()
+    return JsonResponse({
+        "status":"success",
+        "reason":"",
+        "message": {
+            "share":"complate"    
+        }
+    })
+def share_message(request):
+    u = User.objects.all()
+    me = User.objects.get(openid=request.session['openid'])
+    t = 0
+    now = 0
+    for i in u:
+        t += 1
+        if i.times < me.times:
+            now += 1
+    over = now/t*100; 
+    return JsonResponse({
+        "status":"success",
+        "reason":"",
+        "message": {
+            "over":over
+        }
+    })      
+              
+             
 def add_height(request):
     try:
         u = User.objects.get(openid=request.GET['openid'])
@@ -134,75 +173,75 @@ def add_height(request):
         t8000 = 10
         t10000 = 5
         if n < p[0]:
-            h = random.randint(1,100)
+            h = random.randint(1,300)
         elif n < p[0] + p[1] and n >= p[0]:
-            h = random.randint(101,200)
+            h = random.randint(301,500)
         elif n < p[0] + p[1] + p[2] and n >= p[0] + p[1]:
-            h = random.randint(201,300)
+            h = random.randint(501,700)
         elif n < p[0] + p[1] + p[2] + p[3] and n >= p[0] + p[1] + p[2]:
-            h = random.randint(301,400)
+            h = random.randint(701,800)
         elif n < p[0] + p[1] + p[2] + p[3] + p[4] and n >= p[0] + p[1] + p[2] + p[3]:
-            h = random.randint(401,500)
+            h = random.randint(801,900)
         else :
-            h = random.randint(501,600)
-        count_5000 = User.objects.filter(total_height__gt=5000).count()
+            h = random.randint(901,1000)
+        count_5000 = User.objects.filter(total_height__gt=10000).count()
         if count_5000 >= t5000:
             #feed
-            if u.total_height >= 5000:
+            if u.total_height >= 10000:
                 #看是不是冲8000,20人
-                count_8000 = User.objects.filter(total_height__gt=8000).count()
+                count_8000 = User.objects.filter(total_height__gt=15000).count()
                 if count_8000 >= t8000:
-                    if u.total_height >= 8000:
-                        count_10000 = User.objects.filter(total_height__gt=10000).count()
+                    if u.total_height >= 15000:
+                        count_10000 = User.objects.filter(total_height__gt=20000).count()
                         if count_10000 >= t10000:
                                 
-                            if u.total_height >= 10000:
+                            if u.total_height >= 20000:
                                 u.total_height += h
                                 u.save()
                             else:
-                                diff = 9999 - u.total_height
+                                diff = 19999 - u.total_height
                                 h = random.randint(1,diff/40+1)
-                                if u.total_height + h < 9999:
+                                if u.total_height + h < 19999:
                                     u.total_height += h
                                     u.save()
                         else:
                             u.total_height += h
                             u.save()
                     else:
-                        diff = 7999 - u.total_height
+                        diff = 14999 - u.total_height
                         h = random.randint(1,diff/40+1)
-                        if u.total_height + h < 7999:
+                        if u.total_height + h < 14999:
                             u.total_height += h
                             u.save()
                 else:
                     #说明不是二等奖种子选手
-                    diff = 9999 - u.total_height
+                    diff = 19999 - u.total_height
                     h = random.randint(1,diff/40+1)
-                    if u.total_height + h < 9999:
+                    if u.total_height + h < 19999:
                         u.total_height += h
                         u.save()
             else:
                 #说明不是种子选手
-                diff = 4999 - u.total_height
+                diff = 9999 - u.total_height
                 h = random.randint(1,diff/40+1)
                 #永远吹不破5000
-                if u.total_height + h < 4999:
+                if u.total_height + h < 9999:
                     u.total_height += h
                     u.save()
         else:
-            count_8000 = User.objects.filter(total_height__gt=8000).count()
+            count_8000 = User.objects.filter(total_height__gt=15000).count()
             if count_8000 >= t8000:
-                if u.total_height >= 8000:
-                    count_10000 = User.objects.filter(total_height__gt=10000).count()
+                if u.total_height >= 15000:
+                    count_10000 = User.objects.filter(total_height__gt=20000).count()
                     if count_10000 >= t10000:
                                 
-                        if u.total_height >= 10000:
+                        if u.total_height >= 20000:
                             u.total_height += h
                             u.save()
                         else:
-                            diff = 9999 - u.total_height
+                            diff = 19999 - u.total_height
                             h = random.randint(1,diff/40+1)
-                            if u.total_height + h < 9999:
+                            if u.total_height + h < 19999:
                                 u.total_height += h
                                 u.save()
                     else:
@@ -210,21 +249,21 @@ def add_height(request):
                         u.save()
                 else:
                     #说明不是二等奖种子选手
-                    diff = 7999 - u.total_height
+                    diff = 14999 - u.total_height
                     h = random.randint(1,diff/40+1)
-                    if u.total_height + h < 7999:
+                    if u.total_height + h < 14999:
                         u.total_height += h
                         u.save()
             else:
-                count_10000 = User.objects.filter(total_height__gt=10000).count()
+                count_10000 = User.objects.filter(total_height__gt=20000).count()
                 if count_10000 >= t10000:
-                    if u.total_height >= 10000:
+                    if u.total_height >= 20000:
                         u.total_height += h
                         u.save()
                     else:
-                        diff = 9999 - u.total_height
+                        diff = 19999 - u.total_height
                         h = random.randint(1,diff/40+1)
-                        if u.total_height + h < 9999:
+                        if u.total_height + h < 19999:
                             u.total_height += h
                             u.save()
                 else:
@@ -234,8 +273,11 @@ def add_height(request):
         #help.save()
         if request.GET['openid'] == request.session['openid']:
             u = User.objects.get(openid=request.session['openid'])
+            if u.times:
+                u.total_height -= u.times
             u.times = h
-            u.save()
+            if not u.shared :
+                u.save()
         else:
             um = User.objects.get(openid=request.session['openid'])
             help = Help(openid=request.session['openid'],toopenid=request.GET['openid'],dateline=time.time(),height=h,user_id=um.id)
@@ -316,23 +358,13 @@ def help_or_not(request):
                 }
             })
         else:
-            u = User.objects.get(openid=request.GET['openid'])
-            if not u.phone:
-                return JsonResponse({
-                    "status":"success",
-                    "reason":"no mobile message for help",
-                    "message": {
-                        "help":"me"
-                    }
-                })
-            else:
-                return JsonResponse({
-                    "status":"success",
-                    "reason":"",
-                    "message":{
-                        "help":"others"
-                    }
-                })
+            return JsonResponse({
+                "status":"success",
+                "reason":"",
+                "message":{
+                    "help":"others"
+                }
+            })
     else:
         if request.session.get('openid',False):
             return JsonResponse({

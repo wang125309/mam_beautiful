@@ -17,4 +17,6 @@ urlpatterns = patterns('',
     url(r'^'+address+'/enter/','portal.views.enter'),
     url(r'^'+address+'/has_phone/','portal.views.has_phone'),
     url(r'^'+address+'/help_or_not/','portal.views.help_or_not'),
+    url(r'^'+address+'/share_message/','portal.views.share_message'),
+    url(r'^'+address+'/share_complate/','portal.views.share_complate'),
 )

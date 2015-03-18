@@ -9,6 +9,7 @@ class User(models.Model):
     code = models.CharField(max_length=256)
     phone = models.CharField(max_length=256,null=True)
     times = models.IntegerField(null=True)
+    shared = models.CharField(max_length=16,null=True)
     dateline = models.CharField(max_length=64)
     total_height = models.IntegerField()
 class Help(models.Model):
